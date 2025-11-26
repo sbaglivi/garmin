@@ -128,10 +128,10 @@ def extractor_node(state: models.AgentState):
     You are an expert at extracting structured data from user messages.
     We're gathering information to build a running profile.
     For the race date:
-    – If the user provides an absolute date, fill only date.absolute.
-    – If the user provides a relative date, fill only date.relative with the exact user wording.
-    – Never convert relative dates into absolute dates.
-    – Never infer dates that were not provided.
+    - If the user provides an absolute date, fill only date.absolute.
+    - If the user provides a relative date, fill only date.relative with the exact user wording.
+    - Never convert relative dates into absolute dates.
+    - Never infer dates that were not provided.
 
     Information we already have: 
     {format_known(known)}
