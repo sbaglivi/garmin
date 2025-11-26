@@ -52,9 +52,20 @@ def test():
     final_state = graph.invoke(None, config=cfg)
     print(final_state)
 
+def test2():
+    graph = agent.build_graph().compile(checkpointer=memory)
+    tid = "4f09ac59-34dc-4887-ad30-4cdc12095c11"
+    cid = "1f0cabd8-18d7-6646-800b-62956cf1e432"
+    cfg = {
+            "configurable": {"thread_id": tid, "checkpoint_id": cid}
+        }
+    
+    final_state = graph.invoke(None, config=cfg)
+    print(final_state)
+
 def main():
     # test_interviewer_node()
-    test()
+    test2()
 
 if __name__ == "__main__":
     main()

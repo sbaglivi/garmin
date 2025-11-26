@@ -5,6 +5,7 @@ description = "Add your description here"
 readme = "README.md"
 requires-python = ">=3.12"
 dependencies = [
+    "dateparser>=1.2.2",
     "dotenv>=0.9.9",
     "garth>=0.4.47",
     "langchain>=1.1.0",

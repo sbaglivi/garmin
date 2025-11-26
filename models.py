@@ -9,9 +9,22 @@ def iter_populated_fields(model: BaseModel):
 
 type Weekday = Literal["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"]
 
+class RaceDate(BaseModel):
+    absolute: datetime | None = Field(
+        default=None,
+        description="Absolute date in ISO 8601 format, only if the user provided an explicit date (e.g. '2023-10-12', 'October 2023', 'on May 5th')."
+    )
+    relative: str | None = Field(
+        default=None,
+        description="The raw relative expression from the user (e.g. 'about a month ago', 'last summer'). Do NOT convert it; copy it as given, with minimal normalization."
+    )
+
 class Goal(BaseModel):
     type: Literal["5k", "10k", "half_marathon", "marathon", "fitness", "lose weight"]
-    target_date: datetime | None = None
+    target_date: RaceDate | None = Field(
+        default=None,
+        description="Date by which user would like to accomplish the goal. If the user gave an absolute date, fill 'absolute'. If they gave a relative date, fill 'relative'."
+    )
     target_time: float | None = None # minutes
 
 class RunTime(BaseModel):
@@ -32,7 +45,10 @@ class BeginnerUserProfile(BaseUserProfile):
 class Race(BaseModel):
     distance: Literal["5k", "10k", "half_marathon", "marathon"]
     finish_time: float # minutes
-    date: datetime | None = Field(default=None, description="Use an approximate date if the exact date is unknown (e.g. about a month ago / last year).")
+    date: RaceDate | None = Field(
+        default=None,
+        description="Date of the race. If the user gave an absolute date, fill 'absolute'. If they gave a relative date, fill 'relative'."
+    )
 
 class AdvancedUserProfile(BaseUserProfile):
     distance_per_week: float | None
