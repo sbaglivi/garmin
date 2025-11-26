@@ -25,7 +25,7 @@ def main():
     login()
     month = 10
     calendar = garth.connectapi(f"/calendar-service/year/2025/month/{month}")
-    with open(f"calendar{month}.json", "w") as f:
+    with open(f"data/monthly/calendar{month}.json", "w") as f:
         json.dump(calendar, f, indent=2)
     # tmp = garth.connectapi("/activity-service/activity/20264714507")
     # with open("activity.json", "w") as f: 

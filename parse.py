@@ -34,13 +34,13 @@ def get_splits(id: str):
     return garth.connectapi(f"activity-service/activity/{id}/typedsplits")["splits"]
     
 def main():
-    save_file = Path("./save.json")
+    save_file = Path("data/cache.json")
     save = {}
     if save_file.is_file():
         with save_file.open() as f:
             save = json.load(f)
 
-    with open("calendar10.json") as f:
+    with open("data/monthly/calendar10.json") as f:
         content = json.load(f)
 
     for ci in content["calendarItems"]:
@@ -51,7 +51,7 @@ def main():
             continue
 
         detail = garth.connectapi(f"/activity-service/activity/{ci['id']}")
-        with open(str(ci["id"])+".json", "w") as f:
+        with open(f"data/activities/{ci['id']}.json", "w") as f:
             json.dump(detail, f)
 
         show_splits = get_show_splits(f"show splits for {parse_date(ci['date'])} {parse_title(ci['title'])}?")
@@ -128,7 +128,7 @@ def summarize_run(activity: dict, title: str, splits: dict | None) -> str:
             p_min, p_sec = int(pace // 60), int(round(pace % 60))
             cadence = s.get("averageRunCadence")
             split_lines.append(
-                f"Split {i} ({s["type"]}): {d_km:.2f} km, {p_min}:{p_sec:02d} min/km, HR {s.get('averageHR'):.0f} Cad: {cadence:.0f}"
+                f"Split {i} ({s['type']}): {d_km:.2f} km, {p_min}:{p_sec:02d} min/km, HR {s.get('averageHR'):.0f} Cad: {cadence:.0f}"
             )
         if split_lines:
             result += "\nSplits:\n" + "\n".join(split_lines)

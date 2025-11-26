@@ -1,0 +1,16 @@
+[project]
+name = "garmin"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = [
+    "dotenv>=0.9.9",
+    "garth>=0.4.47",
+    "langchain>=1.1.0",
+    "langchain-openai>=1.1.0",
+    "langgraph>=1.0.3",
+    "langgraph-checkpoint-sqlite>=3.0.0",
+    "openai>=2.8.1",
+    "pydantic>=2.12.4",
+]
