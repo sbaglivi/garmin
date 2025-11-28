@@ -18,7 +18,7 @@ def amsg(content: str) -> dict:
 
 
 def test_interviewer_node():
-    state = models.AgentState(
+    state = models.State(
         user_level="advanced",
         messages=[
             umsg("I usually run about 30 miles a week, and I want to train for a half marathon in 3 months."),
@@ -28,7 +28,7 @@ def test_interviewer_node():
     print(response["messages"])
 
 def test_extractor_node():
-    state = models.AgentState(
+    state = models.State(
         user_level="advanced",
         messages=[
             umsg("I usually run about 30 miles a week, and I want to train for a half marathon in 3 months."),
@@ -40,7 +40,7 @@ def test_extractor_node():
     print(response)
 
 def test_extractor_node_incomplete_data():
-    state = models.AgentState(
+    state = models.State(
         user_level="advanced",
         messages=[
             umsg("I usually run about 30 miles a week, and I want to train for a half marathon in 3 months."),
@@ -60,7 +60,7 @@ def test():
         }
     graph.update_state(
         config=cfg,
-        values=models.AgentState(user_level="advanced", messages=[umsg("I usually run about 30 miles a week, and I want to train for a half marathon in 3 months.")]),
+        values=models.State(user_level="advanced", messages=[umsg("I usually run about 30 miles a week, and I want to train for a half marathon in 3 months.")]),
         as_node="triage_node"
     )
     final_state = graph.invoke(None, config=cfg)
@@ -89,12 +89,12 @@ def test_incoherent_plan():
         amsg("Sorry to hear that, many people health improves after they start being more active. Do you have a specific goal in mind - like a race that you'd like to participate in - or are you just looking to improve your fitness?"),
         umsg("I'd like to run a marathon, a month from now"),
     ]
-    state = models.AgentState.beginner(
+    state = models.State.beginner(
         msgs, "sedentary", 40, ["pain under the right knee", "low back pain sometimes"], 
         3, models.Goal(type="marathon", target_date=models.RaceDate(relative="in a month"))
     )
-    response = agent.verifier_node(state)["coherence_check"]
-    assert not response.is_coherent, f"the user fitness levels and his goals are incompatible: {response}"
+    response: models.CoherenceCheck = agent.verifier_node(state)["coherence_check"]
+    assert not response.ok, f"the user fitness levels and his goals are incompatible: {response}"
     print(response)
     state.coherence_check = response
     response = agent.interviewer_node(state)['messages']

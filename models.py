@@ -60,7 +60,7 @@ class AdvancedUserProfile(BaseUserProfile):
     distance_per_week: float | None
     recent_race: Race | None
 
-class AgentState(BaseModel):
+class State(BaseModel):
     preferred_distance_unit: Literal["miles", "kilometers"] | None = None
     goal: Goal | None = None
     age: int | None = None
@@ -91,14 +91,11 @@ class WeeklyPreferences(BaseModel):
     run_times: list[RunTime]
 
 class TriageResult(BaseModel):
-    # The "Chain of Thought" - helps the LLM make the right decision
     reasoning: str = Field(..., description="Explain why you think the user is a beginner or advanced based on their message.")
-    
-    # The Decision - Pydantic will REJECT any string that isn't one of these 3
     user_level: Literal["beginner", "advanced", "unknown"] = Field(..., description="The classification of the user.")
 
 class CoherenceCheck(BaseModel):
-    is_coherent: bool
+    ok: bool
     reasoning: str
     suggested_changes: str
 
