@@ -1,4 +1,4 @@
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, create_model
 from typing import Literal, Annotated
 from datetime import datetime
 from langgraph.graph.message import add_messages, AnyMessage
@@ -18,6 +18,12 @@ class RaceDate(BaseModel):
         default=None,
         description="The raw relative expression from the user (e.g. 'about a month ago', 'last summer'). Do NOT convert it; copy it as given, with minimal normalization."
     )
+
+    def __repr__(self):
+        if self.absolute:
+            return f"on or before {self.absolute}"
+        
+        return self.relative
 
 class Goal(BaseModel):
     type: Literal["5k", "10k", "half_marathon", "marathon", "fitness", "lose weight"]
@@ -44,7 +50,7 @@ class BeginnerUserProfile(BaseUserProfile):
 
 class Race(BaseModel):
     distance: Literal["5k", "10k", "half_marathon", "marathon"]
-    finish_time: float # minutes
+    finish_time: float | None = Field(None, description="time in minutes that it took to complete the race")
     date: RaceDate | None = Field(
         default=None,
         description="Date of the race. If the user gave an absolute date, fill 'absolute'. If they gave a relative date, fill 'relative'."
@@ -52,7 +58,7 @@ class Race(BaseModel):
 
 class AdvancedUserProfile(BaseUserProfile):
     distance_per_week: float | None
-    recent_races: list[Race] | None
+    recent_race: Race | None
 
 class AgentState(BaseModel):
     preferred_distance_unit: Literal["miles", "kilometers"] | None = None
@@ -60,16 +66,25 @@ class AgentState(BaseModel):
     age: int | None = None
     injury_history: list[str] | None = None
     days_per_week: int | None = None
+    timing_preferences: str | None = Field(None, description="specific days and rough times at which user is available to train e.g. All morning on weekdays, every other day, I have time for a long run only on sunday")
 
     # beginner
     activity_level: str | None = None
     # intermediate
     distance_per_week: float | None = None
-    recent_races: list[Race] | None = None
+    recent_race: Race | None = None
 
     # state
     messages: Annotated[list[AnyMessage], add_messages]
     user_level: Literal["beginner", "advanced", "unknown"] = "unknown"
+    coherence_check: "CoherenceCheck | None" = None
+    awaiting_fields: list[str] = []
+    failure_count: int = 0
+
+
+    @classmethod
+    def beginner(cls, msgs, activity_level: str, age: int, injury_history: list[str], days_per_week: int, goal: Goal, preferred_unit: str = "kilometers"):
+        return cls(user_level="beginner", messages=msgs, activity_level=activity_level, age=age, injury_history=injury_history, days_per_week=days_per_week, goal=goal, preferred_distance_unit=preferred_unit)
 
 
 class WeeklyPreferences(BaseModel):
@@ -81,3 +96,20 @@ class TriageResult(BaseModel):
     
     # The Decision - Pydantic will REJECT any string that isn't one of these 3
     user_level: Literal["beginner", "advanced", "unknown"] = Field(..., description="The classification of the user.")
+
+class CoherenceCheck(BaseModel):
+    is_coherent: bool
+    reasoning: str
+    suggested_changes: str
+
+def build_info_request_model(allowed_fields: list[str]):
+    # Literal must receive literals, not a list
+    AwaitingLiteral = Literal[tuple(allowed_fields)]
+
+    InfoRequest = create_model(
+        "InfoRequest",
+        question=(str, ...),
+        awaiting_fields=(list[AwaitingLiteral], ...)
+    )
+
+    return InfoRequest
