@@ -3,10 +3,6 @@ import utils
 import nodes
 from langgraph.graph import StateGraph, START, END
 
-
-def user_classified(state: models.State):
-    return "interviewer" if state.user_level != "unknown" else "get_user_input"
-    
 def all_fields_collected(state: models.State):
     _, missing = utils.get_profile_status(state)
     if len(missing) == 0:
@@ -31,7 +27,6 @@ def build_graph():
 
     # nodes
     agent_builder.add_node("is_beginner_node", nodes.is_beginner)
-    agent_builder.add_node("classifier_node", nodes.classifier)
     agent_builder.add_node("interviewer_node", nodes.interviewer)
     agent_builder.add_node("get_user_info", nodes.get_user_info)
     agent_builder.add_node("extractor_node", nodes.extractor)
@@ -40,16 +35,11 @@ def build_graph():
 
     # linear edges
     agent_builder.add_edge(START, "is_beginner_node")
-    agent_builder.add_edge("is_beginner_node", "classifier_node")
-    agent_builder.add_edge("interviewer_node", "get_user_input")
+    agent_builder.add_edge("is_beginner_node", "interviewer_node")
+    agent_builder.add_edge("interviewer_node", "get_user_info")
     agent_builder.add_edge("get_user_info", "extractor_node")
 
     # conditional edges
-    agent_builder.add_conditional_edges(
-        "classifier_node",
-        user_classified,
-        ["is_beginner_node", "interviewer_node"]
-    )
     agent_builder.add_conditional_edges(
         "extractor_node",
         all_fields_collected,
@@ -71,7 +61,7 @@ def build_graph():
 
 def main():
     agent = build_graph().compile()
-    result = agent.invoke(models.State(messages=[]))
+    result = agent.invoke(models.State(messages=[]), {"recursion_limit": 100})
     print(result)
 
 if __name__ == "__main__":

@@ -23,37 +23,13 @@ def extractor(state: models.State) -> dict[str, Any]:
             We're looking for the following fields:
             {utils.format_missing(missing)}
         """)
-    else:
-        system_prompt=utils.prompt(f"""
-            You are an expert at extracting structured corrections from user messages.
-            All required fields are already collected. 
-            Your task is ONLY to resolve the following contradictions or issues:
+        response_format = models.BeginnerUserProfile if state.user_level == "beginner" else models.AdvancedUserProfile
+        extr_gpt = utils.gpt.with_structured_output(response_format)
+        response = extr_gpt.invoke(utils.with_system_prompt(state.messages[-2:], system_prompt))
+        new_state = {}
+        for k,v in models.iter_populated_fields(response):
+            new_state[k] = v
 
-            VERIFIER-IDENTIFIED ISSUES:
-            {state.coherence_check.reasoning}
-
-            KNOWN DATA:
-            {utils.format_known(known)}
-
-            RULES:
-            1. Update ONLY fields directly related to the issues listed above.
-            2. Do NOT extract new fields beyond those issues.
-            3. Do NOT overwrite unrelated known information.
-            4. If the user's latest message clarifies or corrects a field involved in an issue, update it.
-            5. If the message does not address an issue, leave all structured fields unchanged.
-            6. Never infer or guess values.
-
-            Return a partial update containing only the fields the user clarified.
-        """)
-    response_format = models.BeginnerUserProfile if state.user_level == "beginner" else models.AdvancedUserProfile
-    extr_gpt = utils.gpt.with_structured_output(response_format)
-    response = extr_gpt.invoke(utils.with_system_prompt(state.messages[-2:], system_prompt))
-
-    new_state = {}
-    for k,v in models.iter_populated_fields(response):
-        new_state[k] = v
-
-    if missing:
         progress = False
         for field in state.awaiting_fields:
             if getattr(response, field, None) is not None:
@@ -61,4 +37,17 @@ def extractor(state: models.State) -> dict[str, Any]:
                 break
         new_state["failure_count"] = 0 if progress else state.failure_count + 1
 
-    return new_state
+        return new_state
+    else:
+        system_prompt=utils.prompt(f"""
+            You are an expert at extracting structured changes from user messages.
+            Your task is to understand whether the user agrees to the suggested adaptations to its training plans and, if not, whether he makes a new proposal.
+            If the user is not clear on accepting the suggestions, just flag it as a no.
+
+            SUGGESTED CHANGES:
+            {state.coherence_check.suggested_changes.to_lines()}
+        """)
+        extr_gpt = utils.gpt.with_structured_output(models.UserChangeResponse)
+        response = extr_gpt.invoke(utils.with_system_prompt(state.messages[-2:], system_prompt))
+        return {"user_change_response": response}
+

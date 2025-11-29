@@ -9,6 +9,16 @@ load_dotenv()
 
 gpt = ChatOpenAI(model_name="gpt-4o-mini", use_responses_api=True)
 
+def yes_or_no():
+    while True:
+        user_input = input("Your response: ").lower().strip()
+        if user_input == "yes":
+            return True
+        elif user_input == "no":
+            return False
+        
+        print("Sorry, I couldn't quite catch that. Can you answer with a 'yes' or 'no'?")
+
 def race_results_complete(state: models.State) -> bool:
     if not state.recent_race:
         return False
@@ -66,18 +76,6 @@ def format_missing(missing: list[str]) -> str:
         lines.append(f"- {key}")
     return "\n".join(lines)
 
-
-def format_goal(goal: models.Goal):
-    assert goal is not None, "was asked to format a goal which is none"
-
-    curr = f"has a goal of {goal.type}"
-    if goal.target_date:
-        curr += str(goal.target_date)
-    if goal.target_time:
-        curr += f"with a time of {goal.target_time}"
-        
-    return curr
-
 def format_age(age: int):
     return f"The user is {age} years old"
 
@@ -111,7 +109,7 @@ def format_advanced_info(state: models.State):
 def format_user_info(state: models.State):
     infos = [
         format_age(state.age),
-        format_goal(state.goal),
+        str(state.goal),
         format_days_per_week(state.days_per_week)
     ]
     if state.injury_history:

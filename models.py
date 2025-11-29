@@ -33,6 +33,16 @@ class Goal(BaseModel):
     )
     target_time: float | None = None # minutes
 
+
+    def __repr__(self):
+        curr = f"has a goal of {self.type}"
+        if self.target_date:
+            curr += str(self.target_date)
+        if self.target_time:
+            curr += f"with a time of {self.target_time}"
+            
+        return curr
+
 class RunTime(BaseModel):
     day: Weekday
     time_of_day: Literal["morning", "afternoon", "evening"]
@@ -46,6 +56,7 @@ class BaseUserProfile(BaseModel):
     preferred_run_times: list[RunTime] | None
 
 class BeginnerUserProfile(BaseUserProfile):
+    starting_intensity_level: Literal["run", "run/walk", "walk"] | None = None
     activity_level: str | None
 
 class Race(BaseModel):
@@ -66,10 +77,11 @@ class State(BaseModel):
     age: int | None = None
     injury_history: list[str] | None = None
     days_per_week: int | None = None
-    timing_preferences: str | None = Field(None, description="specific days and rough times at which user is available to train e.g. All morning on weekdays, every other day, I have time for a long run only on sunday")
+    # timing_preferences: str | None = Field(None, description="specific days and rough times at which user is available to train e.g. All morning on weekdays, every other day, I have time for a long run only on sunday")
 
     # beginner
     activity_level: str | None = None
+    starting_intensity_level: Literal["run", "run/walk", "walk"] = "run"
     # intermediate
     distance_per_week: float | None = None
     recent_race: Race | None = None
@@ -80,13 +92,30 @@ class State(BaseModel):
     coherence_check: "CoherenceCheck | None" = None
     awaiting_fields: list[str] = []
     failure_count: int = 0
+    user_change_response: "UserChangeResponse | None" = None
 
 
     @classmethod
     def beginner(cls, msgs, activity_level: str, age: int, injury_history: list[str], days_per_week: int, goal: Goal, preferred_unit: str = "kilometers"):
         return cls(user_level="beginner", messages=msgs, activity_level=activity_level, age=age, injury_history=injury_history, days_per_week=days_per_week, goal=goal, preferred_distance_unit=preferred_unit)
 
+class ChangeableFields(BaseModel):
+    goal: Goal | None = None
+    days_per_week: int | None = None
+    starting_intensity_level: Literal["run", "run/walk", "walk"] | None = None
 
+    def to_lines(self) -> str:
+        items = (
+            f"- {k}: {v!s}"
+            for k, v in self.model_dump().items()
+            if v is not None
+        )
+        return "\n".join(items)
+
+class UserChangeResponse(BaseModel):
+    accept: bool
+    new_proposal: ChangeableFields | None = None
+    
 class WeeklyPreferences(BaseModel):
     run_times: list[RunTime]
 
@@ -97,7 +126,7 @@ class TriageResult(BaseModel):
 class CoherenceCheck(BaseModel):
     ok: bool
     reasoning: str
-    suggested_changes: str
+    suggested_changes: ChangeableFields | None = None
 
 def build_info_request_model(allowed_fields: list[str]):
     # Literal must receive literals, not a list
