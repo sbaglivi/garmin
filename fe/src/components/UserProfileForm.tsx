@@ -22,7 +22,7 @@ const INITIAL_PROFILE: UserProfile = {
     } as BeginnerFitness,
     logistics: {
         days_available: [],
-        long_run_day: DayOfWeek.SUN,
+        long_run_day: '' as DayOfWeek,
     },
     goal: {
         type: 'fitness_maintenance',
