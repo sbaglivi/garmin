@@ -4,8 +4,7 @@ from pydantic import BaseModel, Field
 
 class BeginnerFitness(BaseModel):
     level: Literal["beginner"]
-    general_activity_level: Literal["sedentary", "lightly_active", "moderately_active", "very_active"] | None = Field(
-        None, 
+    general_activity_level: Literal["sedentary", "lightly_active", "moderately_active", "very_active"] = Field(
         description="Used if no running history. Sedentary=Desk job, no sports. Active=Manual labor or plays other sports."
     )
     can_run_nonstop_30min: enums.ConfirmationStatus = Field(description="Can the user currently run for 30 minutes without stopping?")
