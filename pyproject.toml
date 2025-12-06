@@ -7,6 +7,7 @@ requires-python = ">=3.12"
 dependencies = [
     "dateparser>=1.2.2",
     "dotenv>=0.9.9",
+    "fastapi[standard]>=0.123.10",
     "garth>=0.4.47",
     "langchain>=1.1.0",
     "langchain-openai>=1.1.0",
@@ -15,4 +16,5 @@ dependencies = [
     "openai>=2.8.1",
     "pydantic>=2.12.4",
     "pydantic-ai>=1.26.0",
+    "uvicorn>=0.32.0",
 ]

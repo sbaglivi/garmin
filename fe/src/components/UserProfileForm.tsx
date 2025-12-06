@@ -65,6 +65,8 @@ export default function UserProfileForm() {
     const [hasInjuryHistory, setHasInjuryHistory] = useState(false);
     const [wantsStrengthTraining, setWantsStrengthTraining] = useState(false);
     const [errors, setErrors] = useState<Record<string, string>>({});
+    const [isSubmitting, setIsSubmitting] = useState(false);
+    const [showSuccessModal, setShowSuccessModal] = useState(false);
 
     const handleChange = (field: keyof UserProfile, value: unknown) => {
         setProfile((prev) => ({ ...prev, [field]: value }));
@@ -221,10 +223,28 @@ export default function UserProfileForm() {
         }
     };
 
-    const handleSubmit = () => {
-        if (validateCurrentPage()) {
-            console.log('Submitted Profile:', profile);
-            alert('Profile submitted! Check console for data.');
+    const handleSubmit = async () => {
+        if (!validateCurrentPage()) return;
+
+        setIsSubmitting(true);
+        try {
+            const response = await fetch('http://localhost:8000/profiles', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(profile),
+            });
+
+            if (!response.ok) {
+                const error = await response.json();
+                throw new Error(error.detail || 'Failed to save profile');
+            }
+
+            setShowSuccessModal(true);
+        } catch (error) {
+            console.error('Submit error:', error);
+            setErrors({ submit: error instanceof Error ? error.message : 'Failed to save profile' });
+        } finally {
+            setIsSubmitting(false);
         }
     };
 
@@ -718,28 +738,65 @@ export default function UserProfileForm() {
                 </div>
 
                 {/* Footer */}
-                <div className="flex justify-between px-6 py-4 border-t border-neutral-800">
-                    <button
-                        type="button"
-                        onClick={handleBack}
-                        disabled={isFirstPage}
-                        className={`px-5 py-2 rounded-lg font-medium transition-all ${isFirstPage
-                            ? 'text-neutral-700 cursor-not-allowed'
-                            : 'text-neutral-300 hover:text-neutral-100 hover:bg-neutral-800'
-                            }`}
-                    >
-                        Back
-                    </button>
+                <div className="flex flex-col gap-3 px-6 py-4 border-t border-neutral-800">
+                    {errors.submit && (
+                        <p className="text-amber-500 text-sm text-center">{errors.submit}</p>
+                    )}
+                    <div className="flex justify-between">
+                        <button
+                            type="button"
+                            onClick={handleBack}
+                            disabled={isFirstPage || isSubmitting}
+                            className={`px-5 py-2 rounded-lg font-medium transition-all ${isFirstPage || isSubmitting
+                                ? 'text-neutral-700 cursor-not-allowed'
+                                : 'text-neutral-300 hover:text-neutral-100 hover:bg-neutral-800'
+                                }`}
+                        >
+                            Back
+                        </button>
 
-                    <button
-                        type="button"
-                        onClick={isLastPage ? handleSubmit : handleNext}
-                        className="px-5 py-2 bg-amber-500 hover:bg-amber-400 text-neutral-900 font-medium rounded-lg transition-colors"
-                    >
-                        {isLastPage ? 'Submit Profile' : 'Next'}
-                    </button>
+                        <button
+                            type="button"
+                            onClick={isLastPage ? handleSubmit : handleNext}
+                            disabled={isSubmitting}
+                            className={`px-5 py-2 bg-amber-500 text-neutral-900 font-medium rounded-lg transition-colors ${isSubmitting ? 'opacity-50 cursor-not-allowed' : 'hover:bg-amber-400'}`}
+                        >
+                            {isSubmitting ? 'Saving...' : isLastPage ? 'Submit Profile' : 'Next'}
+                        </button>
+                    </div>
                 </div>
             </form>
+
+            {/* Success Modal */}
+            {showSuccessModal && (
+                <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50">
+                    <div className="bg-neutral-900 border border-neutral-800 rounded-xl p-6 max-w-sm mx-4">
+                        <div className="text-center">
+                            <div className="w-12 h-12 bg-amber-500/20 rounded-full flex items-center justify-center mx-auto mb-4">
+                                <svg className="w-6 h-6 text-amber-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                                </svg>
+                            </div>
+                            <h3 className="text-lg font-semibold text-neutral-100 mb-2">Profile Created</h3>
+                            <p className="text-neutral-400 text-sm mb-6">
+                                Your training profile has been saved successfully.
+                            </p>
+                            <button
+                                onClick={() => {
+                                    setShowSuccessModal(false);
+                                    setProfile(INITIAL_PROFILE);
+                                    setCurrentPage('personal');
+                                    setHasInjuryHistory(false);
+                                    setWantsStrengthTraining(false);
+                                }}
+                                className="px-5 py-2 bg-amber-500 hover:bg-amber-400 text-neutral-900 font-medium rounded-lg transition-colors"
+                            >
+                                Create Another
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
         </div>
     );
 }

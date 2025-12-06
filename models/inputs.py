@@ -47,7 +47,7 @@ class UserProfile(BaseModel):
     injury_history: Optional[str] = None
     fitness: BeginnerFitness | IntermediateFitness
     logistics: Logistics
-    strength: Optional[StrengthProfile]
+    strength: Optional[StrengthProfile] = None
     goal: RaceGoal | GeneralGoal
     first_training_date: validators.DateField
 
