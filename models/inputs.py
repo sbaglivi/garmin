@@ -12,13 +12,16 @@ class BeginnerFitness(BaseModel):
     )
     can_run_nonstop_30min: enums.ConfirmationStatus = Field(description="Can the user currently run for 30 minutes without stopping?")
 
+class RecentRace(BaseModel):
+    time: Optional[str] = Field(default=None, description="HH:MM:SS")
+    distance: Optional[Literal["5k", "10k", "half_marathon", "marathon"]] = None
+
 class IntermediateFitness(BaseModel):
-    level: Literal["intermediate", "advanced"] 
+    level: Literal["intermediate", "advanced"]
     average_weekly_distance: float
     current_longest_run: float
+    recent_race: Optional[RecentRace] = None
     # Speed baseline
-    recent_race_time: Optional[str] = Field(default=None, description="HH:MM:SS")
-    recent_race_distance: Optional[float] = None
     easy_run_pace: Optional[str] = Field(default=None, description="MM:SS /unit")
 
 class Logistics(BaseModel):

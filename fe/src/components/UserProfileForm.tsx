@@ -5,11 +5,14 @@ import {
     DayOfWeek,
     ConfirmationStatus,
     EquipmentAccess,
+    RaceDistance,
     type BeginnerFitness,
     type IntermediateFitness,
     type StrengthProfile,
+    type RecentRace,
 } from '../types';
 import { useAuth } from '../contexts/AuthContext';
+import VerificationModal from './VerificationModal';
 
 const getTomorrowDate = (): string => {
     const tomorrow = new Date();
@@ -68,7 +71,7 @@ export default function UserProfileForm() {
     const [wantsStrengthTraining, setWantsStrengthTraining] = useState(false);
     const [errors, setErrors] = useState<Record<string, string>>({});
     const [isSubmitting, setIsSubmitting] = useState(false);
-    const [showSuccessModal, setShowSuccessModal] = useState(false);
+    const [showVerificationModal, setShowVerificationModal] = useState(false);
 
     const handleChange = (field: keyof UserProfile, value: unknown) => {
         setProfile((prev) => ({ ...prev, [field]: value }));
@@ -115,9 +118,17 @@ export default function UserProfileForm() {
             if (fitness.average_weekly_distance <= 0) newErrors.average_weekly_distance = 'Distance must be positive';
             if (fitness.current_longest_run <= 0) newErrors.current_longest_run = 'Distance must be positive';
 
-            const timeRegex = /^\d{2}:\d{2}:\d{2}$/;
-            if (fitness.recent_race_time && !timeRegex.test(fitness.recent_race_time)) {
-                newErrors.recent_race_time = 'Format must be HH:MM:SS';
+            // Validate recent race - if one field is provided, both are required
+            if (fitness.recent_race?.time || fitness.recent_race?.distance) {
+                const timeRegex = /^\d{2}:\d{2}:\d{2}$/;
+                if (!fitness.recent_race?.time) {
+                    newErrors.recent_race_time = 'Time is required when providing a race distance';
+                } else if (!timeRegex.test(fitness.recent_race.time)) {
+                    newErrors.recent_race_time = 'Format must be HH:MM:SS';
+                }
+                if (!fitness.recent_race?.distance) {
+                    newErrors.recent_race_distance = 'Distance is required when providing a race time';
+                }
             }
 
             const paceRegex = /^\d{2}:\d{2}$/;
@@ -244,7 +255,7 @@ export default function UserProfileForm() {
                 throw new Error(error.detail || 'Failed to save profile');
             }
 
-            setShowSuccessModal(true);
+            setShowVerificationModal(true);
         } catch (error) {
             console.error('Submit error:', error);
             setErrors({ submit: error instanceof Error ? error.message : 'Failed to save profile' });
@@ -475,11 +486,41 @@ export default function UserProfileForm() {
                         </div>
 
                         <div>
+                            <label className={labelClass}>Recent Race Distance</label>
+                            <select
+                                value={(profile.fitness as IntermediateFitness).recent_race?.distance || ''}
+                                onChange={(e) => {
+                                    const fitness = profile.fitness as IntermediateFitness;
+                                    const newDistance = e.target.value as RaceDistance || undefined;
+                                    const newRecentRace: RecentRace | undefined = newDistance || fitness.recent_race?.time
+                                        ? { distance: newDistance as RaceDistance, time: fitness.recent_race?.time || '' }
+                                        : undefined;
+                                    handleChange('fitness', { ...fitness, recent_race: newRecentRace });
+                                }}
+                                className={inputClass}
+                            >
+                                <option value="">Select distance</option>
+                                <option value={RaceDistance.FIVE_K}>5K</option>
+                                <option value={RaceDistance.TEN_K}>10K</option>
+                                <option value={RaceDistance.HALF_MARATHON}>Half Marathon</option>
+                                <option value={RaceDistance.MARATHON}>Marathon</option>
+                            </select>
+                            {errors.recent_race_distance && <p className="text-amber-500 text-xs mt-1">{errors.recent_race_distance}</p>}
+                        </div>
+
+                        <div>
                             <label className={labelClass}>Recent Race Time (HH:MM:SS)</label>
                             <input
                                 type="text"
-                                value={(profile.fitness as IntermediateFitness).recent_race_time || ''}
-                                onChange={(e) => handleChange('fitness', { ...profile.fitness, recent_race_time: formatTime(e.target.value, 'HH:MM:SS') })}
+                                value={(profile.fitness as IntermediateFitness).recent_race?.time || ''}
+                                onChange={(e) => {
+                                    const fitness = profile.fitness as IntermediateFitness;
+                                    const newTime = formatTime(e.target.value, 'HH:MM:SS');
+                                    const newRecentRace: RecentRace | undefined = newTime || fitness.recent_race?.distance
+                                        ? { time: newTime, distance: fitness.recent_race?.distance as RaceDistance }
+                                        : undefined;
+                                    handleChange('fitness', { ...fitness, recent_race: newRecentRace });
+                                }}
                                 className={inputClass}
                                 placeholder="00:00:00"
                             />
@@ -772,36 +813,28 @@ export default function UserProfileForm() {
                 </div>
             </form>
 
-            {/* Success Modal */}
-            {showSuccessModal && (
-                <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50">
-                    <div className="bg-neutral-900 border border-neutral-800 rounded-xl p-6 max-w-sm mx-4">
-                        <div className="text-center">
-                            <div className="w-12 h-12 bg-amber-500/20 rounded-full flex items-center justify-center mx-auto mb-4">
-                                <svg className="w-6 h-6 text-amber-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                                </svg>
-                            </div>
-                            <h3 className="text-lg font-semibold text-neutral-100 mb-2">Profile Created</h3>
-                            <p className="text-neutral-400 text-sm mb-6">
-                                Your training profile has been saved successfully.
-                            </p>
-                            <button
-                                onClick={() => {
-                                    setShowSuccessModal(false);
-                                    setProfile(INITIAL_PROFILE);
-                                    setCurrentPage('personal');
-                                    setHasInjuryHistory(false);
-                                    setWantsStrengthTraining(false);
-                                }}
-                                className="px-5 py-2 bg-amber-500 hover:bg-amber-400 text-neutral-900 font-medium rounded-lg transition-colors"
-                            >
-                                Create Another
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            )}
+            <VerificationModal
+                isOpen={showVerificationModal}
+                onClose={() => {
+                    setShowVerificationModal(false);
+                }}
+                onAcceptProposal={(proposal) => {
+                    // Apply the proposal to the profile
+                    if (proposal.new_goal) {
+                        handleChange('goal', proposal.new_goal);
+                    }
+                    if (proposal.new_days_per_week) {
+                        // User would need to adjust days_available manually
+                        // For now, just close and let them edit
+                    }
+                    setShowVerificationModal(false);
+                    setCurrentPage('goal');
+                }}
+                onContinueAnyway={() => {
+                    setShowVerificationModal(false);
+                    // Profile is already saved, user can proceed
+                }}
+            />
         </div>
     );
 }

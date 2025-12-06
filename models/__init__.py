@@ -15,5 +15,6 @@ from .inputs import (
 from .outputs import (
     WeeklySchedule, 
     RunningSession, 
-    StrengthSession
+    StrengthSession,
+    ProfileEvaluation
 )

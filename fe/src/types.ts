@@ -28,12 +28,24 @@ export interface BeginnerFitness {
     can_run_nonstop_30min?: ConfirmationStatus | null;
 }
 
+export const RaceDistance = {
+    FIVE_K: "5k",
+    TEN_K: "10k",
+    HALF_MARATHON: "half_marathon",
+    MARATHON: "marathon",
+} as const;
+export type RaceDistance = typeof RaceDistance[keyof typeof RaceDistance];
+
+export interface RecentRace {
+    time: string;
+    distance: RaceDistance;
+}
+
 export interface IntermediateFitness {
     level: "intermediate" | "advanced";
     average_weekly_distance: number;
     current_longest_run: number;
-    recent_race_time?: string;
-    recent_race_distance?: number;
+    recent_race?: RecentRace;
     easy_run_pace?: string;
 }
 

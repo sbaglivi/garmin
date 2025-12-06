@@ -1,9 +1,11 @@
+import asyncio
 from contextlib import asynccontextmanager
 from typing import Annotated
 
 from fastapi import FastAPI, Depends, HTTPException, status
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.security import OAuth2PasswordRequestForm
+from pydantic import BaseModel
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -20,6 +22,7 @@ from auth import (
     create_access_token,
     get_current_user,
 )
+from tasks import run_verification
 
 
 @asynccontextmanager
@@ -99,13 +102,44 @@ async def create_profile(
 
     if user_data:
         user_data.profile = profile_data
+        user_data.verification_status = "pending"
+        user_data.verification_result = None
     else:
-        user_data = UserData(user_id=current_user.id, profile=profile_data)
+        user_data = UserData(
+            user_id=current_user.id,
+            profile=profile_data,
+            verification_status="pending",
+        )
         db.add(user_data)
 
     await db.commit()
 
-    return {"message": "Profile saved"}
+    # Start background verification task
+    asyncio.create_task(run_verification(current_user.id, profile_data))
+
+    return {"message": "Profile saved", "verification_status": "pending"}
+
+
+class VerificationResponse(BaseModel):
+    status: str  # "pending" | "completed" | "error" | None
+    result: dict | None = None
+
+
+@app.get("/profiles/verification", response_model=VerificationResponse)
+async def get_verification(
+    current_user: Annotated[User, Depends(get_current_user)],
+    db: Annotated[AsyncSession, Depends(get_db)],
+):
+    result = await db.execute(select(UserData).where(UserData.user_id == current_user.id))
+    user_data = result.scalar_one_or_none()
+
+    if not user_data:
+        raise HTTPException(status_code=404, detail="No profile found")
+
+    return VerificationResponse(
+        status=user_data.verification_status or "none",
+        result=user_data.verification_result,
+    )
 
 
 @app.get("/health")

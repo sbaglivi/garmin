@@ -35,8 +35,8 @@ def to_llm_context(up: m.UserProfile) -> str:
         if up.fitness.easy_run_pace:
             lines.append(f"- **Easy Run Pace**: {up.fitness.easy_run_pace} min/{up.units.value}")
         
-        if up.fitness.recent_race_time and up.fitness.recent_race_distance:
-            lines.append(f"- **Recent Race**: {up.fitness.recent_race_distance}{up.units.value} in {up.fitness.recent_race_time}")
+        if up.fitness.recent_race is not None:
+            lines.append(f"- **Recent Race**: {up.fitness.recent_race.distance}{up.units.value} in {up.fitness.recent_race.time}")
     lines.append("")
 
     # 4. Goal (Polymorphic handling)

@@ -1,4 +1,4 @@
-from sqlalchemy import ForeignKey, JSON
+from sqlalchemy import ForeignKey, JSON, String
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 from database import Base
 
@@ -12,6 +12,10 @@ class UserData(Base):
     profile: Mapped[dict | None] = mapped_column(JSON, nullable=True)
     training_overview: Mapped[dict | None] = mapped_column(JSON, nullable=True)
     weekly_schedules: Mapped[list | None] = mapped_column(JSON, nullable=True)
+
+    # Verification state: "pending" | "completed" | "error" | None
+    verification_status: Mapped[str | None] = mapped_column(String(20), nullable=True)
+    verification_result: Mapped[dict | None] = mapped_column(JSON, nullable=True)
 
     user: Mapped["User"] = relationship(back_populates="data")
 
