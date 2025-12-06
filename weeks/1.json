@@ -1,0 +1,86 @@
+{
+  "week_number": 2,
+  "phase_name": "Base",
+  "weekly_volume_target": 36.0,
+  "weekly_long_run_target": 15.0,
+  "week_overview": "This week focuses on building your aerobic base with consistent easy runs and a foundational bodyweight strength session to support your running.",
+  "running_sessions": [
+    {
+      "day": "Monday",
+      "run_type": "easy",
+      "distance_km": 10.0,
+      "workout_description": "An easy paced run to start the week, focusing on comfortable breathing and maintaining a conversational pace.",
+      "notes": null
+    },
+    {
+      "day": "Wednesday",
+      "run_type": "easy",
+      "distance_km": 11.0,
+      "workout_description": "Another easy run, building up your weekly mileage. Concentrate on relaxed form and consistent effort.",
+      "notes": null
+    },
+    {
+      "day": "Friday",
+      "run_type": "long_run",
+      "distance_km": 15.0,
+      "workout_description": "Your weekly long run, crucial for developing endurance. Maintain a steady, comfortable pace throughout.",
+      "notes": "Remember to fuel and hydrate adequately before and during your long run."
+    }
+  ],
+  "strength_sessions": [
+    {
+      "day": "Monday",
+      "duration_minutes": 40,
+      "exercises": [
+        {
+          "name": "Bodyweight Squats",
+          "series": 3,
+          "reps": 12,
+          "weight": null,
+          "recovery": 60,
+          "form_cues": "Keep chest up, weight in heels, descend as if sitting in a chair."
+        },
+        {
+          "name": "Alternating Lunges",
+          "series": 3,
+          "reps": 10,
+          "weight": null,
+          "recovery": 60,
+          "form_cues": "Step forward, lower until both knees are bent at 90 degrees, keep front knee behind toes."
+        },
+        {
+          "name": "Push-ups",
+          "series": 3,
+          "reps": 10,
+          "weight": null,
+          "recovery": 60,
+          "form_cues": "Maintain a straight line from head to heels, lower chest towards the floor."
+        },
+        {
+          "name": "Plank",
+          "series": 3,
+          "reps": 45,
+          "weight": null,
+          "recovery": 60,
+          "form_cues": "Keep body in a straight line, engage core, don't let hips sag or rise too high."
+        },
+        {
+          "name": "Glute Bridges",
+          "series": 3,
+          "reps": 15,
+          "weight": null,
+          "recovery": 60,
+          "form_cues": "Lie on back, knees bent, feet flat. Lift hips off floor by squeezing glutes until body forms a straight line from shoulders to knees."
+        },
+        {
+          "name": "Bird-Dog",
+          "series": 3,
+          "reps": 10,
+          "weight": null,
+          "recovery": 60,
+          "form_cues": "Start on hands and knees, extend opposite arm and leg simultaneously, keeping core stable and back flat."
+        }
+      ]
+    }
+  ]
+}

@@ -11,7 +11,7 @@ import {
 
 const INITIAL_PROFILE: UserProfile = {
     name: '',
-    age: 30,
+    age: 0,
     biological_sex: 'prefer_not_to_say',
     units: DistanceUnit.KM,
     injury_history: '',
@@ -76,8 +76,8 @@ export default function UserProfileForm() {
             if (!fitness.can_run_nonstop_30min) newErrors.can_run_nonstop_30min = 'Please answer this question';
         } else {
             const fitness = profile.fitness as IntermediateFitness;
-            if (fitness.average_weekly_distance < 0) newErrors.average_weekly_distance = 'Distance cannot be negative';
-            if (fitness.current_longest_run < 0) newErrors.current_longest_run = 'Distance cannot be negative';
+            if (fitness.average_weekly_distance <= 0) newErrors.average_weekly_distance = 'Distance must be positive';
+            if (fitness.current_longest_run <= 0) newErrors.current_longest_run = 'Distance must be positive';
 
             const timeRegex = /^\d{2}:\d{2}:\d{2}$/;
             if (fitness.recent_race_time && !timeRegex.test(fitness.recent_race_time)) {
@@ -93,9 +93,8 @@ export default function UserProfileForm() {
         if (profile.logistics.days_available.length === 0) {
             newErrors.days_available = 'Select at least one available day';
         }
-
-        if (profile.goal.type !== 'fitness_maintenance' && profile.goal.type !== 'base_building') {
-            if (!profile.goal.race_date) newErrors.race_date = 'Race date is required for this goal';
+        if (profile.logistics.long_run_day === '' as DayOfWeek) {
+            newErrors.long_run_day = "Select a day for your long run"
         }
 
         if (profile.goal.goal_type === 'specific_time_target') {
@@ -258,7 +257,7 @@ export default function UserProfileForm() {
                             type="button"
                             onClick={() => handleChange('fitness', { ...INITIAL_PROFILE.fitness, level: 'beginner' })}
                             className={`px-4 py-2 rounded-md text-sm font-semibold transition-all ${profile.fitness.level === 'beginner'
-                                ? 'bg-blue-600 text-white shadow-md ring-2 ring-blue-400 ring-offset-1'
+                                ? 'bg-blue-600 border-blue-600 text-white shadow-sm'
                                 : 'bg-gray-100 text-gray-500 hover:bg-gray-200 dark:bg-gray-800 dark:text-gray-400'
                                 }`}
                         >
@@ -272,7 +271,7 @@ export default function UserProfileForm() {
                                 current_longest_run: 0
                             } as IntermediateFitness)}
                             className={`px-4 py-2 rounded-md text-sm font-semibold transition-all ${profile.fitness.level !== 'beginner'
-                                ? 'bg-blue-600 text-white shadow-md ring-2 ring-blue-400 ring-offset-1'
+                                ? 'bg-blue-600 border-blue-600 text-white shadow-sm'
                                 : 'bg-gray-100 text-gray-500 hover:bg-gray-200 dark:bg-gray-800 dark:text-gray-400'
                                 }`}
                         >
@@ -290,10 +289,10 @@ export default function UserProfileForm() {
                                     className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-white"
                                 >
                                     <option value="">Select Activity Level</option>
-                                    <option value="sedentary">Sedentary (Desk job, no sports)</option>
-                                    <option value="lightly_active">Lightly Active</option>
-                                    <option value="moderately_active">Moderately Active</option>
-                                    <option value="very_active">Very Active (Manual labor or other sports)</option>
+                                    <option value="sedentary">Sedentary - Minimal daily activity, mostly sitting (desk job, little or no structured exercise)</option>
+                                    <option value="lightly_active">Lightly Active - Light activity daily, like long walks, light chores, or 1-3 short/light exercise sessions per week</option>
+                                    <option value="moderately_active">Moderately Active - Regular moderate exercise (e.g., 3-4 workouts per week) or an active job (e.g., teaching, walking a lot)</option>
+                                    <option value="very_active">Very Active - Consistent vigorous activity or training (e.g., daily intense workouts, running, or a demanding physical job)</option>
                                 </select>
                                 {errors.general_activity_level && <p className="text-red-500 text-xs mt-1">{errors.general_activity_level}</p>}
                             </div>
@@ -408,6 +407,7 @@ export default function UserProfileForm() {
                                 <option key={day} value={day}>{day}</option>
                             ))}
                         </select>
+                        {errors.long_run_day && <p className="text-red-500 text-xs mt-1">{errors.long_run_day}</p>}
                     </div>
                 </section>
 
@@ -435,7 +435,7 @@ export default function UserProfileForm() {
                         {(profile.goal.type !== 'fitness_maintenance' && profile.goal.type !== 'base_building') && (
                             <>
                                 <div>
-                                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Race Date (DD-MM-YYYY)</label>
+                                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Race Date</label>
                                     <input
                                         type="date"
                                         value={profile.goal.race_date || ''}

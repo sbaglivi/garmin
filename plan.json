@@ -1,0 +1,27 @@
+{
+  "plan_overview": "We will embark on a 22-week journey, starting with a 9-week Base phase to safely increase your aerobic capacity and build resilience after your mild shin splints. This will be followed by a 7-week Build phase to introduce marathon-specific workouts, culminating in a 3-week Peak phase for your longest runs and highest mileage before a well-deserved 3-week Taper to get you to the marathon start line feeling strong and prepared.",
+  "target_peak_volume_km": 55,
+  "target_longest_run_km": 30,
+  "phases": [
+    {
+      "phase_name": "Base",
+      "duration_weeks": 9,
+      "key_focus": "Gradual increase in aerobic volume and long run distance, reinforce running form, strengthen supporting muscles."
+    },
+    {
+      "phase_name": "Build",
+      "duration_weeks": 7,
+      "key_focus": "Introduce marathon-specific workouts (e.g., tempo, long runs with marathon pace segments), continue progressive long run development."
+    },
+    {
+      "phase_name": "Peak",
+      "duration_weeks": 3,
+      "key_focus": "Highest volume and intensity, longest runs, fine-tune race pace and nutrition strategies."
+    },
+    {
+      "phase_name": "Taper",
+      "duration_weeks": 3,
+      "key_focus": "Reduce volume significantly, maintain race-specific intensity, prioritize recovery and mental preparation."
+    }
+  ]
+}

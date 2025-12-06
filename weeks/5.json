@@ -1,0 +1,83 @@
+{
+  "week_number": 6,
+  "phase_name": "Base",
+  "weekly_volume_target": 32.0,
+  "weekly_long_run_target": 14.0,
+  "week_overview": "This week focuses on building your aerobic base with a steady volume of easy running, culminating in a solid long run to boost your endurance. A single bodyweight strength session will help maintain overall strength and support your running.",
+  "running_sessions": [
+    {
+      "day": "Monday",
+      "run_type": "easy",
+      "distance_km": 9.0,
+      "workout_description": "An easy-paced run to start the week, focusing on maintaining a conversational pace and building aerobic endurance. Enjoy the rhythm of your strides!",
+      "notes": null
+    },
+    {
+      "day": "Wednesday",
+      "run_type": "easy",
+      "distance_km": 9.0,
+      "workout_description": "Another easy run, ensuring you keep the effort low and consistent. This helps with recovery from Monday and prepares you for the long run.",
+      "notes": null
+    },
+    {
+      "day": "Friday",
+      "run_type": "long_run",
+      "distance_km": 14.0,
+      "workout_description": "Your key endurance builder for the week. Maintain a comfortable, steady pace throughout. Focus on hydration and fueling before and during the run.",
+      "notes": "Remember to take a gel or chews around the halfway mark if you typically do for runs over an hour."
+    }
+  ],
+  "strength_sessions": [
+    {
+      "day": "Tuesday",
+      "duration_minutes": 40,
+      "exercises": [
+        {
+          "name": "Bodyweight Squats",
+          "series": 3,
+          "reps": 12,
+          "hold": null,
+          "weight": null,
+          "recovery": 60,
+          "form_cues": "Keep your chest up, push your hips back as if sitting in a chair, and ensure your knees track over your toes. Go as deep as comfortable while maintaining good form."
+        },
+        {
+          "name": "Walking Lunges",
+          "series": 3,
+          "reps": 10,
+          "hold": null,
+          "weight": null,
+          "recovery": 60,
+          "form_cues": "Take a step forward, lowering your hips until both knees are bent at approximately a 90-degree angle. Ensure your front knee is directly above your ankle and your back knee hovers above the ground. Alternate legs."
+        },
+        {
+          "name": "Push-ups",
+          "series": 3,
+          "reps": 10,
+          "hold": null,
+          "weight": null,
+          "recovery": 60,
+          "form_cues": "Start in a plank position, keeping your body in a straight line from head to heels. Lower your chest towards the floor by bending your elbows, then push back up. Modify on knees if needed."
+        },
+        {
+          "name": "Plank",
+          "series": 3,
+          "reps": null,
+          "hold": 45,
+          "weight": null,
+          "recovery": 60,
+          "form_cues": "Hold a straight line from head to heels, engaging your core and glutes. Avoid letting your hips sag or pike up too high."
+        },
+        {
+          "name": "Glute Bridges",
+          "series": 3,
+          "reps": 15,
+          "hold": null,
+          "weight": null,
+          "recovery": 60,
+          "form_cues": "Lie on your back with knees bent and feet flat on the floor close to your glutes. Drive through your heels to lift your hips off the ground until your body forms a straight line from knees to shoulders. Squeeze your glutes at the top."
+        }
+      ]
+    }
+  ]
+}

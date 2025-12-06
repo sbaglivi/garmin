@@ -1,0 +1,78 @@
+{
+  "week_number": 1,
+  "phase_name": "Base",
+  "weekly_volume_target": 35.0,
+  "weekly_long_run_target": 14.0,
+  "week_overview": "This base phase week focuses on building your aerobic foundation with three easy-paced runs, including a solid long run. A single bodyweight strength session will support overall strength and injury prevention.",
+  "running_sessions": [
+    {
+      "day": "Monday",
+      "run_type": "easy",
+      "distance_km": 10.0,
+      "workout_description": "Start your week with a comfortable easy run to build your aerobic base. Focus on maintaining a conversational pace.",
+      "notes": null
+    },
+    {
+      "day": "Wednesday",
+      "run_type": "easy",
+      "distance_km": 11.0,
+      "workout_description": "Another easy run to continue building endurance. Keep the effort level low and enjoy the movement.",
+      "notes": null
+    },
+    {
+      "day": "Friday",
+      "run_type": "long_run",
+      "distance_km": 14.0,
+      "workout_description": "Your weekly long run! This is crucial for building endurance and mental toughness. Maintain a steady, comfortable pace throughout.",
+      "notes": null
+    }
+  ],
+  "strength_sessions": [
+    {
+      "day": "Monday",
+      "duration_minutes": 30,
+      "exercises": [
+        {
+          "name": "Squats",
+          "series": 3,
+          "reps": 12,
+          "weight": null,
+          "recovery": 60,
+          "form_cues": "Focus on depth, keeping your chest up and knees tracking over your toes."
+        },
+        {
+          "name": "Lunges",
+          "series": 3,
+          "reps": 10,
+          "weight": null,
+          "recovery": 60,
+          "form_cues": "Maintain balance, ensure front knee doesn't go past toes, and back knee hovers above the ground."
+        },
+        {
+          "name": "Push-ups",
+          "series": 3,
+          "reps": 12,
+          "weight": null,
+          "recovery": 60,
+          "form_cues": "Keep your body in a straight line from head to heels. Modify on knees if needed."
+        },
+        {
+          "name": "Plank",
+          "series": 3,
+          "reps": 45,
+          "weight": null,
+          "recovery": 60,
+          "form_cues": "Engage your core, keep your back flat, and avoid sagging hips."
+        },
+        {
+          "name": "Glute Bridges",
+          "series": 3,
+          "reps": 15,
+          "weight": null,
+          "recovery": 45,
+          "form_cues": "Squeeze your glutes at the top, lifting your hips until your body forms a straight line from shoulders to knees."
+        }
+      ]
+    }
+  ]
+}
