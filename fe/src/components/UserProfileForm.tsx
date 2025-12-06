@@ -54,6 +54,11 @@ const PAGE_TITLES: Record<Page, string> = {
     goal: 'Goal',
 };
 
+// Shared styles
+const inputClass = "w-full px-3 py-2.5 bg-neutral-800 border border-neutral-700 rounded-lg text-neutral-100 placeholder-neutral-500 focus:outline-none focus:border-amber-500 focus:ring-1 focus:ring-amber-500 transition-colors";
+const labelClass = "block text-sm font-medium text-neutral-300 mb-1.5";
+const sectionTitleClass = "text-base font-medium text-neutral-200 mb-3";
+
 export default function UserProfileForm() {
     const [profile, setProfile] = useState<UserProfile>(INITIAL_PROFILE);
     const [currentPage, setCurrentPage] = useState<Page>('personal');
@@ -245,37 +250,37 @@ export default function UserProfileForm() {
     const isLastPage = currentPageIndex === PAGES.length - 1;
 
     const renderPersonalPage = () => (
-        <div className="space-y-4">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div className="space-y-5">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
                 <div>
-                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Name</label>
+                    <label className={labelClass}>Name</label>
                     <input
                         type="text"
                         value={profile.name}
                         onChange={(e) => handleChange('name', e.target.value)}
-                        className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-white"
+                        className={inputClass}
                         placeholder="Your Name"
                     />
-                    {errors.name && <p className="text-red-500 text-xs mt-1">{errors.name}</p>}
+                    {errors.name && <p className="text-amber-500 text-xs mt-1">{errors.name}</p>}
                 </div>
 
                 <div>
-                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Age</label>
+                    <label className={labelClass}>Age</label>
                     <input
                         type="number"
                         value={profile.age || ''}
                         onChange={(e) => handleChange('age', parseInt(e.target.value) || 0)}
-                        className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-white"
+                        className={inputClass}
                     />
-                    {errors.age && <p className="text-red-500 text-xs mt-1">{errors.age}</p>}
+                    {errors.age && <p className="text-amber-500 text-xs mt-1">{errors.age}</p>}
                 </div>
 
                 <div>
-                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Biological Sex</label>
+                    <label className={labelClass}>Biological Sex</label>
                     <select
                         value={profile.biological_sex}
                         onChange={(e) => handleChange('biological_sex', e.target.value)}
-                        className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-white"
+                        className={inputClass}
                     >
                         <option value="male">Male</option>
                         <option value="female">Female</option>
@@ -284,27 +289,27 @@ export default function UserProfileForm() {
                 </div>
 
                 <div>
-                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Units</label>
-                    <div className="flex space-x-4 mt-2">
-                        <label className="inline-flex items-center">
+                    <label className={labelClass}>Units</label>
+                    <div className="flex gap-4 mt-2">
+                        <label className="inline-flex items-center cursor-pointer">
                             <input
                                 type="radio"
                                 value={DistanceUnit.KM}
                                 checked={profile.units === DistanceUnit.KM}
                                 onChange={() => handleChange('units', DistanceUnit.KM)}
-                                className="form-radio text-blue-600"
+                                className="w-4 h-4 text-amber-500 bg-neutral-800 border-neutral-600 focus:ring-amber-500 focus:ring-offset-neutral-900"
                             />
-                            <span className="ml-2 text-gray-700 dark:text-gray-300">Kilometers</span>
+                            <span className="ml-2 text-neutral-300">Kilometers</span>
                         </label>
-                        <label className="inline-flex items-center">
+                        <label className="inline-flex items-center cursor-pointer">
                             <input
                                 type="radio"
                                 value={DistanceUnit.MILES}
                                 checked={profile.units === DistanceUnit.MILES}
                                 onChange={() => handleChange('units', DistanceUnit.MILES)}
-                                className="form-radio text-blue-600"
+                                className="w-4 h-4 text-amber-500 bg-neutral-800 border-neutral-600 focus:ring-amber-500 focus:ring-offset-neutral-900"
                             />
-                            <span className="ml-2 text-gray-700 dark:text-gray-300">Miles</span>
+                            <span className="ml-2 text-neutral-300">Miles</span>
                         </label>
                     </div>
                 </div>
@@ -313,10 +318,10 @@ export default function UserProfileForm() {
     );
 
     const renderFitnessPage = () => (
-        <div className="space-y-6">
+        <div className="space-y-8">
             {/* Injury History */}
             <div className="space-y-4">
-                <h3 className="text-lg font-medium text-gray-800 dark:text-gray-200">Health</h3>
+                <h3 className={sectionTitleClass}>Health</h3>
                 <div className="flex items-center">
                     <input
                         id="has_injury_history"
@@ -328,21 +333,21 @@ export default function UserProfileForm() {
                                 handleChange('injury_history', '');
                             }
                         }}
-                        className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
+                        className="w-4 h-4 rounded bg-neutral-800 border-neutral-600 text-amber-500 focus:ring-amber-500 focus:ring-offset-neutral-900"
                     />
-                    <label htmlFor="has_injury_history" className="ml-2 block text-sm text-gray-700 dark:text-gray-300">
+                    <label htmlFor="has_injury_history" className="ml-2 text-sm text-neutral-300 cursor-pointer">
                         Have you ever been injured before?
                     </label>
                 </div>
 
                 {hasInjuryHistory && (
                     <div>
-                        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Injury History</label>
+                        <label className={labelClass}>Injury History</label>
                         <textarea
                             value={profile.injury_history || ''}
                             onChange={(e) => handleChange('injury_history', e.target.value)}
                             rows={3}
-                            className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-white"
+                            className={inputClass}
                             placeholder="Please describe past injuries or issues (knees, shins, etc)..."
                         />
                     </div>
@@ -351,14 +356,14 @@ export default function UserProfileForm() {
 
             {/* Fitness Level */}
             <div className="space-y-4">
-                <h3 className="text-lg font-medium text-gray-800 dark:text-gray-200">Fitness Level</h3>
-                <div className="flex space-x-4 mb-4">
+                <h3 className={sectionTitleClass}>Fitness Level</h3>
+                <div className="flex gap-3">
                     <button
                         type="button"
                         onClick={() => handleChange('fitness', { ...INITIAL_PROFILE.fitness, level: 'beginner' })}
-                        className={`px-4 py-2 rounded-md text-sm font-semibold transition-all ${profile.fitness.level === 'beginner'
-                            ? 'bg-blue-600 border-blue-600 text-white shadow-sm'
-                            : 'bg-gray-100 text-gray-500 hover:bg-gray-200 dark:bg-gray-800 dark:text-gray-400'
+                        className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${profile.fitness.level === 'beginner'
+                            ? 'bg-amber-500 text-neutral-900'
+                            : 'bg-neutral-800 text-neutral-400 hover:bg-neutral-700 border border-neutral-700'
                             }`}
                     >
                         Beginner
@@ -370,9 +375,9 @@ export default function UserProfileForm() {
                             average_weekly_distance: 0,
                             current_longest_run: 0
                         } as IntermediateFitness)}
-                        className={`px-4 py-2 rounded-md text-sm font-semibold transition-all ${profile.fitness.level !== 'beginner'
-                            ? 'bg-blue-600 border-blue-600 text-white shadow-sm'
-                            : 'bg-gray-100 text-gray-500 hover:bg-gray-200 dark:bg-gray-800 dark:text-gray-400'
+                        className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${profile.fitness.level !== 'beginner'
+                            ? 'bg-amber-500 text-neutral-900'
+                            : 'bg-neutral-800 text-neutral-400 hover:bg-neutral-700 border border-neutral-700'
                             }`}
                     >
                         Intermediate / Advanced
@@ -380,13 +385,13 @@ export default function UserProfileForm() {
                 </div>
 
                 {profile.fitness.level === 'beginner' ? (
-                    <div className="space-y-4">
+                    <div className="space-y-5">
                         <div>
-                            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">General Activity Level</label>
+                            <label className={labelClass}>General Activity Level</label>
                             <select
                                 value={(profile.fitness as BeginnerFitness).general_activity_level || ''}
                                 onChange={(e) => handleChange('fitness', { ...profile.fitness, general_activity_level: e.target.value })}
-                                className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-white"
+                                className={inputClass}
                             >
                                 <option value="">Select Activity Level</option>
                                 <option value="sedentary">Sedentary - Minimal daily activity, mostly sitting</option>
@@ -394,78 +399,78 @@ export default function UserProfileForm() {
                                 <option value="moderately_active">Moderately Active - 3-4 workouts/week or active job</option>
                                 <option value="very_active">Very Active - Daily intense workouts or demanding physical job</option>
                             </select>
-                            {errors.general_activity_level && <p className="text-red-500 text-xs mt-1">{errors.general_activity_level}</p>}
+                            {errors.general_activity_level && <p className="text-amber-500 text-xs mt-1">{errors.general_activity_level}</p>}
                         </div>
 
                         <div>
-                            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Can you run for 30 minutes non-stop?</label>
-                            <div className="flex space-x-4 mt-2">
+                            <label className={labelClass}>Can you run for 30 minutes non-stop?</label>
+                            <div className="flex gap-4 mt-2">
                                 {[ConfirmationStatus.YES, ConfirmationStatus.NO, ConfirmationStatus.MAYBE].map((status) => (
-                                    <label key={status} className="inline-flex items-center">
+                                    <label key={status} className="inline-flex items-center cursor-pointer">
                                         <input
                                             type="radio"
                                             value={status}
                                             checked={(profile.fitness as BeginnerFitness).can_run_nonstop_30min === status}
                                             onChange={() => handleChange('fitness', { ...profile.fitness, can_run_nonstop_30min: status })}
-                                            className="form-radio text-blue-600"
+                                            className="w-4 h-4 text-amber-500 bg-neutral-800 border-neutral-600 focus:ring-amber-500 focus:ring-offset-neutral-900"
                                         />
-                                        <span className="ml-2 text-gray-700 dark:text-gray-300 capitalize">{status}</span>
+                                        <span className="ml-2 text-neutral-300 capitalize">{status}</span>
                                     </label>
                                 ))}
                             </div>
-                            {errors.can_run_nonstop_30min && <p className="text-red-500 text-xs mt-1">{errors.can_run_nonstop_30min}</p>}
+                            {errors.can_run_nonstop_30min && <p className="text-amber-500 text-xs mt-1">{errors.can_run_nonstop_30min}</p>}
                         </div>
                     </div>
                 ) : (
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
                         <div>
-                            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                            <label className={labelClass}>
                                 Average Weekly Distance ({profile.units})
                             </label>
                             <input
                                 type="number"
                                 value={(profile.fitness as IntermediateFitness).average_weekly_distance || ''}
                                 onChange={(e) => handleChange('fitness', { ...profile.fitness, average_weekly_distance: parseFloat(e.target.value) || 0 })}
-                                className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-white"
+                                className={inputClass}
                             />
-                            {errors.average_weekly_distance && <p className="text-red-500 text-xs mt-1">{errors.average_weekly_distance}</p>}
+                            {errors.average_weekly_distance && <p className="text-amber-500 text-xs mt-1">{errors.average_weekly_distance}</p>}
                         </div>
 
                         <div>
-                            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                            <label className={labelClass}>
                                 Longest Run ({profile.units})
                             </label>
                             <input
                                 type="number"
                                 value={(profile.fitness as IntermediateFitness).current_longest_run || ''}
                                 onChange={(e) => handleChange('fitness', { ...profile.fitness, current_longest_run: parseFloat(e.target.value) || 0 })}
-                                className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-white"
+                                className={inputClass}
                             />
-                            {errors.current_longest_run && <p className="text-red-500 text-xs mt-1">{errors.current_longest_run}</p>}
+                            {errors.current_longest_run && <p className="text-amber-500 text-xs mt-1">{errors.current_longest_run}</p>}
                         </div>
 
                         <div>
-                            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Recent Race Time (HH:MM:SS)</label>
+                            <label className={labelClass}>Recent Race Time (HH:MM:SS)</label>
                             <input
                                 type="text"
                                 value={(profile.fitness as IntermediateFitness).recent_race_time || ''}
                                 onChange={(e) => handleChange('fitness', { ...profile.fitness, recent_race_time: formatTime(e.target.value, 'HH:MM:SS') })}
-                                className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-white"
+                                className={inputClass}
                                 placeholder="00:00:00"
                             />
-                            {errors.recent_race_time && <p className="text-red-500 text-xs mt-1">{errors.recent_race_time}</p>}
+                            {errors.recent_race_time && <p className="text-amber-500 text-xs mt-1">{errors.recent_race_time}</p>}
                         </div>
 
                         <div>
-                            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Easy Run Pace (MM:SS /{profile.units === DistanceUnit.KM ? 'km' : 'mi'})</label>
+                            <label className={labelClass}>Easy Run Pace (MM:SS /{profile.units === DistanceUnit.KM ? 'km' : 'mi'})</label>
                             <input
                                 type="text"
                                 value={(profile.fitness as IntermediateFitness).easy_run_pace || ''}
                                 onChange={(e) => handleChange('fitness', { ...profile.fitness, easy_run_pace: formatTime(e.target.value, 'MM:SS') })}
-                                className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-white"
+                                className={inputClass}
                                 placeholder="00:00"
                             />
-                            {errors.easy_run_pace && <p className="text-red-500 text-xs mt-1">{errors.easy_run_pace}</p>}
+                            {errors.easy_run_pace && <p className="text-amber-500 text-xs mt-1">{errors.easy_run_pace}</p>}
                         </div>
                     </div>
                 )}
@@ -474,62 +479,62 @@ export default function UserProfileForm() {
     );
 
     const renderLogisticsPage = () => (
-        <div className="space-y-6">
+        <div className="space-y-8">
             {/* Schedule */}
-            <div className="space-y-4">
-                <h3 className="text-lg font-medium text-gray-800 dark:text-gray-200">Schedule</h3>
+            <div className="space-y-5">
+                <h3 className={sectionTitleClass}>Schedule</h3>
 
                 <div>
-                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">First Training Date</label>
+                    <label className={labelClass}>First Training Date</label>
                     <input
                         type="date"
                         value={profile.first_training_date}
                         onChange={(e) => handleChange('first_training_date', e.target.value)}
                         min={getTomorrowDate()}
-                        className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-white"
+                        className={inputClass}
                     />
-                    {errors.first_training_date && <p className="text-red-500 text-xs mt-1">{errors.first_training_date}</p>}
+                    {errors.first_training_date && <p className="text-amber-500 text-xs mt-1">{errors.first_training_date}</p>}
                 </div>
 
                 <div>
-                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Days Available to Train</label>
-                    <div className="flex flex-wrap gap-2">
+                    <label className={labelClass}>Days Available to Train</label>
+                    <div className="flex flex-wrap gap-2 mt-1">
                         {Object.values(DayOfWeek).map((day) => (
                             <button
                                 key={day}
                                 type="button"
                                 onClick={() => toggleDayAvailable(day)}
-                                className={`px-3 py-1 rounded-full text-sm border font-medium transition-all ${profile.logistics.days_available.includes(day)
-                                    ? 'bg-blue-600 border-blue-600 text-white shadow-sm'
-                                    : 'bg-gray-50 border-gray-200 text-gray-400 hover:bg-gray-100 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-500'
+                                className={`px-3 py-1.5 rounded-lg text-sm font-medium transition-all ${profile.logistics.days_available.includes(day)
+                                    ? 'bg-amber-500 text-neutral-900'
+                                    : 'bg-neutral-800 text-neutral-400 hover:bg-neutral-700 border border-neutral-700'
                                     }`}
                             >
                                 {day}
                             </button>
                         ))}
                     </div>
-                    {errors.days_available && <p className="text-red-500 text-xs mt-1">{errors.days_available}</p>}
+                    {errors.days_available && <p className="text-amber-500 text-xs mt-1">{errors.days_available}</p>}
                 </div>
 
                 <div>
-                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Preferred Long Run Day</label>
+                    <label className={labelClass}>Preferred Long Run Day</label>
                     <select
                         value={profile.logistics.long_run_day}
                         onChange={(e) => handleChange('logistics', { ...profile.logistics, long_run_day: e.target.value as DayOfWeek })}
-                        className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-white"
+                        className={inputClass}
                     >
                         <option value="">Select Long Run Day</option>
                         {profile.logistics.days_available.map((day) => (
                             <option key={day} value={day}>{day}</option>
                         ))}
                     </select>
-                    {errors.long_run_day && <p className="text-red-500 text-xs mt-1">{errors.long_run_day}</p>}
+                    {errors.long_run_day && <p className="text-amber-500 text-xs mt-1">{errors.long_run_day}</p>}
                 </div>
             </div>
 
             {/* Strength Training */}
-            <div className="space-y-4">
-                <h3 className="text-lg font-medium text-gray-800 dark:text-gray-200">Strength Training</h3>
+            <div className="space-y-5">
+                <h3 className={sectionTitleClass}>Strength Training</h3>
 
                 <div className="flex items-center">
                     <input
@@ -547,41 +552,41 @@ export default function UserProfileForm() {
                                 handleChange('strength', undefined);
                             }
                         }}
-                        className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
+                        className="w-4 h-4 rounded bg-neutral-800 border-neutral-600 text-amber-500 focus:ring-amber-500 focus:ring-offset-neutral-900"
                     />
-                    <label htmlFor="wants_strength_training" className="ml-2 block text-sm text-gray-700 dark:text-gray-300">
+                    <label htmlFor="wants_strength_training" className="ml-2 text-sm text-neutral-300 cursor-pointer">
                         Include strength training in my plan
                     </label>
                 </div>
 
                 {wantsStrengthTraining && profile.strength && (
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
                         <div>
-                            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Equipment Access</label>
+                            <label className={labelClass}>Equipment Access</label>
                             <select
                                 value={profile.strength.equipment_access}
                                 onChange={(e) => handleChange('strength', { ...profile.strength, equipment_access: e.target.value as EquipmentAccess })}
-                                className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-white"
+                                className={inputClass}
                             >
                                 <option value={EquipmentAccess.BODYWEIGHT_ONLY}>Bodyweight Only</option>
                                 <option value={EquipmentAccess.DUMBBELLS_KETTLEBELLS}>Dumbbells / Kettlebells</option>
                                 <option value={EquipmentAccess.FULL_GYM}>Full Gym</option>
                             </select>
-                            {errors.equipment_access && <p className="text-red-500 text-xs mt-1">{errors.equipment_access}</p>}
+                            {errors.equipment_access && <p className="text-amber-500 text-xs mt-1">{errors.equipment_access}</p>}
                         </div>
 
                         <div>
-                            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Sessions Per Week</label>
+                            <label className={labelClass}>Sessions Per Week</label>
                             <select
                                 value={profile.strength.sessions_per_week}
                                 onChange={(e) => handleChange('strength', { ...profile.strength, sessions_per_week: parseInt(e.target.value) })}
-                                className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-white"
+                                className={inputClass}
                             >
-                                <option value={1}>1 session</option>
-                                <option value={2}>2 sessions</option>
-                                <option value={3}>3 sessions</option>
+                                <option value={1}>1</option>
+                                <option value={2}>2</option>
+                                <option value={3}>3</option>
                             </select>
-                            {errors.sessions_per_week && <p className="text-red-500 text-xs mt-1">{errors.sessions_per_week}</p>}
+                            {errors.sessions_per_week && <p className="text-amber-500 text-xs mt-1">{errors.sessions_per_week}</p>}
                         </div>
                     </div>
                 )}
@@ -590,14 +595,14 @@ export default function UserProfileForm() {
     );
 
     const renderGoalPage = () => (
-        <div className="space-y-4">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div className="space-y-5">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
                 <div>
-                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Goal Type</label>
+                    <label className={labelClass}>Goal Type</label>
                     <select
                         value={profile.goal.type}
                         onChange={(e) => handleChange('goal', { ...profile.goal, type: e.target.value })}
-                        className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-white"
+                        className={inputClass}
                     >
                         <option value="5k">5k</option>
                         <option value="10k">10k</option>
@@ -611,11 +616,11 @@ export default function UserProfileForm() {
                 {(profile.goal.type !== 'fitness_maintenance' && profile.goal.type !== 'base_building') && (
                     <>
                         <div>
-                            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Target</label>
+                            <label className={labelClass}>Target</label>
                             <select
                                 value={profile.goal.goal_type}
                                 onChange={(e) => handleChange('goal', { ...profile.goal, goal_type: e.target.value })}
-                                className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-white"
+                                className={inputClass}
                             >
                                 <option value="finish">Finish</option>
                                 <option value="improve_speed">Improve Speed</option>
@@ -624,28 +629,28 @@ export default function UserProfileForm() {
                         </div>
 
                         <div>
-                            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Race Date (optional)</label>
+                            <label className={labelClass}>Race Date (optional)</label>
                             <input
                                 type="date"
                                 min={getMinRaceDate(profile.first_training_date)}
                                 value={profile.goal.race_date || ''}
                                 onChange={(e) => handleChange('goal', { ...profile.goal, race_date: e.target.value })}
-                                className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-white"
+                                className={inputClass}
                             />
-                            {errors.race_date && <p className="text-red-500 text-xs mt-1">{errors.race_date}</p>}
+                            {errors.race_date && <p className="text-amber-500 text-xs mt-1">{errors.race_date}</p>}
                         </div>
 
                         {profile.goal.goal_type === 'specific_time_target' && (
                             <div>
-                                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Target Time (HH:MM:SS)</label>
+                                <label className={labelClass}>Target Time (HH:MM:SS)</label>
                                 <input
                                     type="text"
                                     value={profile.goal.target_time_str || ''}
                                     onChange={(e) => handleChange('goal', { ...profile.goal, target_time_str: formatTime(e.target.value, 'HH:MM:SS') })}
-                                    className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-white"
+                                    className={inputClass}
                                     placeholder="00:00:00"
                                 />
-                                {errors.target_time_str && <p className="text-red-500 text-xs mt-1">{errors.target_time_str}</p>}
+                                {errors.target_time_str && <p className="text-amber-500 text-xs mt-1">{errors.target_time_str}</p>}
                             </div>
                         )}
                     </>
@@ -668,33 +673,31 @@ export default function UserProfileForm() {
     };
 
     return (
-        <div className="max-w-3xl mx-auto p-6 bg-white dark:bg-gray-800 rounded-lg shadow-md">
-            <h1 className="text-2xl font-bold mb-2 text-gray-900 dark:text-white">User Profile</h1>
+        <div className="max-w-2xl mx-auto bg-neutral-900 rounded-xl border border-neutral-800">
+            {/* Header */}
+            <div className="px-6 py-5 border-b border-neutral-800">
+                <h1 className="text-xl font-semibold text-neutral-100">Create Your Profile</h1>
+                <p className="text-sm text-neutral-500 mt-1">Step {currentPageIndex + 1} of {PAGES.length}</p>
+            </div>
 
             {/* Progress indicator */}
-            <div className="mb-6">
-                <div className="flex justify-between mb-2">
+            <div className="px-6 py-4 border-b border-neutral-800">
+                <div className="flex gap-2">
                     {PAGES.map((page, index) => (
-                        <div
-                            key={page}
-                            className={`flex-1 text-center text-xs font-medium ${index <= currentPageIndex
-                                ? 'text-blue-600 dark:text-blue-400'
-                                : 'text-gray-400 dark:text-gray-500'
-                                }`}
-                        >
-                            {PAGE_TITLES[page]}
+                        <div key={page} className="flex-1">
+                            <div
+                                className={`h-1 rounded-full transition-colors ${index <= currentPageIndex
+                                    ? 'bg-amber-500'
+                                    : 'bg-neutral-800'
+                                    }`}
+                            />
+                            <p className={`text-xs mt-2 ${index <= currentPageIndex
+                                ? 'text-amber-500'
+                                : 'text-neutral-600'
+                                }`}>
+                                {PAGE_TITLES[page]}
+                            </p>
                         </div>
-                    ))}
-                </div>
-                <div className="flex space-x-1">
-                    {PAGES.map((page, index) => (
-                        <div
-                            key={page}
-                            className={`flex-1 h-2 rounded-full ${index <= currentPageIndex
-                                ? 'bg-blue-600'
-                                : 'bg-gray-200 dark:bg-gray-700'
-                                }`}
-                        />
                     ))}
                 </div>
             </div>
@@ -709,21 +712,20 @@ export default function UserProfileForm() {
                     }
                 }
             }}>
-                <section className="space-y-4 min-h-[300px]">
-                    <h2 className="text-xl font-semibold text-gray-800 dark:text-gray-200 border-b pb-2">
-                        {PAGE_TITLES[currentPage]}
-                    </h2>
+                {/* Content */}
+                <div className="px-6 py-6 min-h-[320px]">
                     {renderCurrentPage()}
-                </section>
+                </div>
 
-                <div className="flex justify-between pt-6 mt-6 border-t">
+                {/* Footer */}
+                <div className="flex justify-between px-6 py-4 border-t border-neutral-800">
                     <button
                         type="button"
                         onClick={handleBack}
                         disabled={isFirstPage}
-                        className={`px-6 py-2 rounded-md font-semibold transition-colors ${isFirstPage
-                            ? 'bg-gray-100 text-gray-400 cursor-not-allowed dark:bg-gray-700 dark:text-gray-500'
-                            : 'bg-gray-200 text-gray-700 hover:bg-gray-300 dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600'
+                        className={`px-5 py-2 rounded-lg font-medium transition-all ${isFirstPage
+                            ? 'text-neutral-700 cursor-not-allowed'
+                            : 'text-neutral-300 hover:text-neutral-100 hover:bg-neutral-800'
                             }`}
                     >
                         Back
@@ -732,7 +734,7 @@ export default function UserProfileForm() {
                     <button
                         type="button"
                         onClick={isLastPage ? handleSubmit : handleNext}
-                        className="px-6 py-2 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-colors"
+                        className="px-5 py-2 bg-amber-500 hover:bg-amber-400 text-neutral-900 font-medium rounded-lg transition-colors"
                     >
                         {isLastPage ? 'Submit Profile' : 'Next'}
                     </button>
