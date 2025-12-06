@@ -42,6 +42,18 @@ export interface Logistics {
     long_run_day: DayOfWeek;
 }
 
+export const EquipmentAccess = {
+    BODYWEIGHT_ONLY: "bodyweight_only",
+    DUMBBELLS_KETTLEBELLS: "dumbbells_kettlebells",
+    FULL_GYM: "full_gym",
+} as const;
+export type EquipmentAccess = typeof EquipmentAccess[keyof typeof EquipmentAccess];
+
+export interface StrengthProfile {
+    equipment_access: EquipmentAccess;
+    sessions_per_week: number;
+}
+
 export interface Goal {
     type: "5k" | "10k" | "half_marathon" | "marathon" | "fitness_maintenance" | "base_building";
     race_date?: string;
@@ -57,5 +69,7 @@ export interface UserProfile {
     injury_history?: string;
     fitness: BeginnerFitness | IntermediateFitness;
     logistics: Logistics;
+    strength?: StrengthProfile;
     goal: Goal;
+    first_training_date: string; // ISO date string YYYY-MM-DD
 }
