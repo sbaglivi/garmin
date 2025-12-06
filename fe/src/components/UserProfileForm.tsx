@@ -9,6 +9,7 @@ import {
     type IntermediateFitness,
     type StrengthProfile,
 } from '../types';
+import { useAuth } from '../contexts/AuthContext';
 
 const getTomorrowDate = (): string => {
     const tomorrow = new Date();
@@ -60,6 +61,7 @@ const labelClass = "block text-sm font-medium text-neutral-300 mb-1.5";
 const sectionTitleClass = "text-base font-medium text-neutral-200 mb-3";
 
 export default function UserProfileForm() {
+    const { token } = useAuth();
     const [profile, setProfile] = useState<UserProfile>(INITIAL_PROFILE);
     const [currentPage, setCurrentPage] = useState<Page>('personal');
     const [hasInjuryHistory, setHasInjuryHistory] = useState(false);
@@ -230,7 +232,10 @@ export default function UserProfileForm() {
         try {
             const response = await fetch('http://localhost:8000/profiles', {
                 method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`,
+                },
                 body: JSON.stringify(profile),
             });
 

@@ -5,6 +5,8 @@ description = "Add your description here"
 readme = "README.md"
 requires-python = ">=3.12"
 dependencies = [
+    "aiosqlite>=0.20.0",
+    "bcrypt>=4.2.0",
     "dateparser>=1.2.2",
     "dotenv>=0.9.9",
     "fastapi[standard]>=0.123.10",
@@ -16,5 +18,7 @@ dependencies = [
     "openai>=2.8.1",
     "pydantic>=2.12.4",
     "pydantic-ai>=1.26.0",
+    "pyjwt>=2.9.0",
+    "sqlalchemy[asyncio]>=2.0.0",
     "uvicorn>=0.32.0",
 ]
