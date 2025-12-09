@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import {
-    type UserProfile,
+    type UserProfileInput,
     DistanceUnit,
     DayOfWeek,
     ConfirmationStatus,
@@ -25,7 +25,7 @@ const getMinRaceDate = (firstTrainingDate: string): string => {
     return date.toISOString().split('T')[0];
 };
 
-const INITIAL_PROFILE: UserProfile = {
+const INITIAL_PROFILE: UserProfileInput = {
     name: '',
     age: 0,
     biological_sex: 'prefer_not_to_say',
@@ -64,12 +64,12 @@ const sectionTitleClass = "text-base font-medium text-neutral-200 mb-3";
 
 interface Props {
     onSubmitSuccess?: () => void;
-    initialProfile?: UserProfile;
+    initialProfile?: UserProfileInput;
 }
 
 export default function UserProfileForm({ onSubmitSuccess, initialProfile }: Props) {
     const { token } = useAuth();
-    const [profile, setProfile] = useState<UserProfile>(initialProfile || INITIAL_PROFILE);
+    const [profile, setProfile] = useState<UserProfileInput>(initialProfile || INITIAL_PROFILE);
     const [currentPage, setCurrentPage] = useState<Page>('personal');
     const [hasInjuryHistory, setHasInjuryHistory] = useState(!!initialProfile?.injury_history);
     const [wantsStrengthTraining, setWantsStrengthTraining] = useState(!!initialProfile?.strength);
@@ -85,7 +85,7 @@ export default function UserProfileForm({ onSubmitSuccess, initialProfile }: Pro
         }
     }, [initialProfile]);
 
-    const handleChange = (field: keyof UserProfile, value: unknown) => {
+    const handleChange = (field: keyof UserProfileInput, value: unknown) => {
         setProfile((prev) => ({ ...prev, [field]: value }));
         if (errors[field]) {
             setErrors((prev) => {

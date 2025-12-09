@@ -9,7 +9,8 @@ from pydantic import BaseModel
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from models.inputs import UserProfile
+from datetime import date, timedelta
+from models.inputs import UserProfileInput, UserProfile
 from database import init_db, get_db
 from db_models.user import User
 from db_models.user_data import UserData
@@ -90,10 +91,11 @@ async def get_me(current_user: Annotated[User, Depends(get_current_user)]):
 
 @app.post("/profiles")
 async def create_profile(
-    profile: UserProfile,
+    inp_profile: UserProfileInput,
     current_user: Annotated[User, Depends(get_current_user)],
     db: Annotated[AsyncSession, Depends(get_db)],
 ):
+    profile = inp_profile.to_user_profile()
     profile_data = profile.model_dump(mode="json")
 
     # Check if user already has data
@@ -145,12 +147,21 @@ async def get_verification(
 class UserStateResponse(BaseModel):
     has_profile: bool
     profile: dict | None = None
+    plan_start_date: str | None = None  # ISO date YYYY-MM-DD, Monday of week containing first_training_date
     verification_status: str | None = None
     verification_result: dict | None = None
     macroplan_status: str | None = None
     training_overview: dict | None = None
     weekly_plan_status: str | None = None
     weekly_schedules: list | None = None
+
+
+def compute_plan_start_date(first_training_date_str: str) -> str:
+    """Compute the Monday of the week containing first_training_date."""
+    first_training_date = date.fromisoformat(first_training_date_str)
+    days_since_monday = first_training_date.weekday()
+    plan_start = first_training_date - timedelta(days=days_since_monday)
+    return plan_start.isoformat()
 
 
 @app.get("/user/state", response_model=UserStateResponse)
@@ -165,9 +176,15 @@ async def get_user_state(
     if not user_data or not user_data.profile:
         return UserStateResponse(has_profile=False)
 
+    # Compute plan_start_date from first_training_date
+    plan_start_date = None
+    if user_data.profile and user_data.profile.get("first_training_date"):
+        plan_start_date = compute_plan_start_date(user_data.profile["first_training_date"])
+
     return UserStateResponse(
         has_profile=True,
         profile=user_data.profile,
+        plan_start_date=plan_start_date,
         verification_status=user_data.verification_status,
         verification_result=user_data.verification_result,
         macroplan_status=user_data.macroplan_status,

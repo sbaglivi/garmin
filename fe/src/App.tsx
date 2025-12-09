@@ -3,14 +3,17 @@ import UserProfileForm from './components/UserProfileForm';
 import AuthPage from './components/AuthPage';
 import TrainingPlanView from './components/TrainingPlanView';
 import WeeklyPlanView from './components/WeeklyPlanView';
+import CalendarView from './components/CalendarView';
 import PendingView from './components/PendingView';
 import VerificationStatus from './components/VerificationStatus';
+import Navbar from './components/Navbar';
 import { AuthProvider, useAuth } from './contexts/AuthContext';
 import { UserStateProvider, useUserState } from './contexts/UserStateContext';
 import type { Proposal, UserProfile, TrainingStrategy, VerificationResult, WeeklySchedule } from './types';
+import { profileToInput } from './types';
 import './App.css';
 
-type View = 'profile-form' | 'verification-pending' | 'verification-result' | 'macroplan-pending' | 'weekly-plan-pending' | 'weekly-plan' | 'training-plan';
+type View = 'profile-form' | 'verification-pending' | 'verification-result' | 'macroplan-pending' | 'weekly-plan-pending' | 'weekly-plan' | 'training-plan' | 'calendar';
 
 function determineView(userState: ReturnType<typeof useUserState>['userState']): View {
   if (!userState || !userState.has_profile) {
@@ -62,7 +65,7 @@ function MainContent() {
   const { user, logout } = useAuth();
   const { userState, isLoading, proceedWithPlan, refetch } = useUserState();
   const [editingProfile, setEditingProfile] = useState(false);
-  const [showMacroPlan, setShowMacroPlan] = useState(false);
+  const [currentView, setCurrentView] = useState<'calendar' | 'weekly' | 'macro'>('calendar');
 
   if (isLoading) {
     return (
@@ -83,7 +86,14 @@ function MainContent() {
   }
 
   const baseView = determineView(userState);
-  const view = editingProfile ? 'profile-form' : (showMacroPlan && baseView === 'weekly-plan' ? 'training-plan' : baseView);
+  let view: View = baseView;
+  if (!editingProfile && baseView === 'weekly-plan') {
+    if (currentView === 'calendar') view = 'calendar';
+    else if (currentView === 'macro') view = 'training-plan';
+    else view = 'weekly-plan';
+  } else if (editingProfile) {
+    view = 'profile-form';
+  }
 
   const handleEditProfile = () => {
     setEditingProfile(true);
@@ -112,7 +122,7 @@ function MainContent() {
   const renderContent = () => {
     switch (view) {
       case 'profile-form':
-        return <UserProfileForm onSubmitSuccess={handleProfileSubmitted} initialProfile={editingProfile ? userState?.profile : undefined} />;
+        return <UserProfileForm onSubmitSuccess={handleProfileSubmitted} initialProfile={editingProfile && userState?.profile ? profileToInput(userState.profile) : undefined} />;
 
       case 'verification-pending':
         return (
@@ -149,25 +159,30 @@ function MainContent() {
           />
         );
 
+      case 'calendar':
+        if (!userState?.weekly_schedules?.length || !userState?.plan_start_date) return null;
+        return (
+          <CalendarView
+            weeklySchedules={userState.weekly_schedules as WeeklySchedule[]}
+            planStartDate={userState.plan_start_date}
+          />
+        );
+
       case 'weekly-plan':
         if (!userState?.weekly_schedules?.length) return null;
         return (
           <WeeklyPlanView
             schedule={userState.weekly_schedules[0] as WeeklySchedule}
-            onViewMacroPlan={() => setShowMacroPlan(true)}
           />
         );
 
       case 'training-plan':
         if (!userState?.training_overview || !userState?.profile) return null;
         return (
-          <>
-            <TrainingPlanView
-              strategy={userState.training_overview as TrainingStrategy}
-              profile={userState.profile as UserProfile}
-              onViewWeeklyPlan={() => setShowMacroPlan(false)}
-            />
-          </>
+          <TrainingPlanView
+            strategy={userState.training_overview as TrainingStrategy}
+            profile={userState.profile as UserProfile}
+          />
         );
 
       default:
@@ -175,18 +190,30 @@ function MainContent() {
     }
   };
 
+  // Show navbar only when we have a plan ready
+  const showNavbar = baseView === 'weekly-plan' && !editingProfile;
+
   return (
-    <div className="min-h-screen bg-neutral-950 py-8 px-4 flex flex-col">
-      <div className="max-w-2xl mx-auto w-full mb-4 flex justify-between items-center">
-        <span className="text-sm text-neutral-400">{user.email}</span>
-        <button
-          onClick={logout}
-          className="text-sm text-neutral-400 hover:text-neutral-200 transition-colors"
-        >
-          Sign out
-        </button>
-      </div>
-      <div className="flex-1 flex items-center justify-center">
+    <div className="min-h-screen bg-neutral-950 flex flex-col">
+      {showNavbar ? (
+        <Navbar
+          currentView={currentView}
+          onViewChange={setCurrentView}
+          userEmail={user.email}
+          onLogout={logout}
+        />
+      ) : (
+        <div className="max-w-2xl mx-auto w-full py-4 px-4 flex justify-between items-center">
+          <span className="text-sm text-neutral-400">{user.email}</span>
+          <button
+            onClick={logout}
+            className="text-sm text-neutral-400 hover:text-neutral-200 transition-colors"
+          >
+            Sign out
+          </button>
+        </div>
+      )}
+      <div className="flex-1 flex items-center justify-center py-8 px-4">
         {renderContent()}
       </div>
     </div>

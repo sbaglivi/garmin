@@ -11,7 +11,7 @@ import models as m
 
 test_profile = m.UserProfile(
     name="Alice",
-    age=32,
+    birth_date=m.UserProfile.birth_date_from_age(32),  # Age 32 -> birth date
     biological_sex="female",
     strength=m.StrengthProfile(equipment_access="bodyweight_only", sessions_per_week=1),
     units=m.DistanceUnit.KM,

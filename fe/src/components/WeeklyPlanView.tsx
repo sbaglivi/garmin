@@ -3,7 +3,6 @@ import type { WeeklySchedule, RunningSession, StrengthSession, Exercise, DayOfWe
 
 interface Props {
     schedule: WeeklySchedule;
-    onViewMacroPlan?: () => void;
 }
 
 const DAY_ORDER: DayOfWeek[] = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
@@ -94,7 +93,7 @@ function StrengthSessionCard({ session }: { session: StrengthSession }) {
     );
 }
 
-export default function WeeklyPlanView({ schedule, onViewMacroPlan }: Props) {
+export default function WeeklyPlanView({ schedule }: Props) {
     // Group sessions by day
     const sessionsByDay = new Map<DayOfWeek, { running?: RunningSession; strength?: StrengthSession }>();
 
@@ -130,14 +129,6 @@ export default function WeeklyPlanView({ schedule, onViewMacroPlan }: Props) {
                             {schedule.phase_name} Phase
                         </p>
                     </div>
-                    {onViewMacroPlan && (
-                        <button
-                            onClick={onViewMacroPlan}
-                            className="text-sm text-amber-500 hover:text-amber-400 transition-colors"
-                        >
-                            View Full Plan
-                        </button>
-                    )}
                 </div>
             </div>
 

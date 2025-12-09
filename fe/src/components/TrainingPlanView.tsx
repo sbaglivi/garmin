@@ -3,7 +3,6 @@ import type { TrainingStrategy, UserProfile } from '../types';
 interface Props {
     strategy: TrainingStrategy;
     profile: UserProfile;
-    onViewWeeklyPlan?: () => void;
 }
 
 const phaseColors: Record<string, { bg: string; border: string; text: string }> = {
@@ -13,7 +12,7 @@ const phaseColors: Record<string, { bg: string; border: string; text: string }> 
     Taper: { bg: 'bg-green-500/20', border: 'border-green-500/50', text: 'text-green-400' },
 };
 
-export default function TrainingPlanView({ strategy, profile, onViewWeeklyPlan}: Props) {
+export default function TrainingPlanView({ strategy, profile }: Props) {
     const totalWeeks = strategy.phases.reduce((sum, p) => sum + p.duration_weeks, 0);
     const unit = profile.units === 'kilometers' ? 'km' : 'mi';
 
@@ -30,14 +29,6 @@ export default function TrainingPlanView({ strategy, profile, onViewWeeklyPlan}:
                             {totalWeeks} weeks to your goal
                         </p>
                     </div>
-                    {onViewWeeklyPlan && (
-                        <button
-                            onClick={onViewWeeklyPlan}
-                            className="text-sm text-amber-500 hover:text-amber-400 transition-colors"
-                        >
-                            View Weekly Plan
-                        </button>
-                    )}
                 </div>
             </div>
 

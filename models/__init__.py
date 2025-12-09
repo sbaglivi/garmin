@@ -4,9 +4,10 @@ from .enums import DayOfWeek, DistanceUnit
 from .inputs import (
     BeginnerFitness,
     IntermediateFitness,
-    UserProfile, 
-    StrengthProfile, 
-    Logistics, 
+    UserProfile,
+    UserProfileInput,
+    StrengthProfile,
+    Logistics,
     RaceGoal,
     GeneralGoal
 )

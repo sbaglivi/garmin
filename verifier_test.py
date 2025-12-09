@@ -6,7 +6,7 @@ from main import agent
 def main():
     runner_profile = m.UserProfile(
         name="Alice",
-        age=32,
+        birth_date=m.UserProfile.birth_date_from_age(32),
         biological_sex="female",
         units=enums.DistanceUnit.KM,
         injury_history="Recovered mild shin splints 6 months ago",
@@ -30,7 +30,7 @@ def main():
 def tmp():
     runner_profile = m.UserProfile(
         name="Alice",
-        age=32,
+        birth_date=m.UserProfile.birth_date_from_age(32),
         biological_sex="female",
         units=enums.DistanceUnit.KM,
         injury_history="Recovered mild shin splints 6 months ago",
