@@ -23,7 +23,7 @@ def login():
 
 def main():
     login()
-    month = 10
+    month = 11
     calendar = garth.connectapi(f"/calendar-service/year/2025/month/{month}")
     with open(f"data/monthly/calendar{month}.json", "w") as f:
         json.dump(calendar, f, indent=2)

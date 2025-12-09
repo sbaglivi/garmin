@@ -1,10 +1,20 @@
 # Range
 
 ## Todo:
+- add more flexible ways to get a grasp of your training state during profile
 - write a small prompt versioning system?
-- try validating a realistic user profile, see the output
-- create an API
-- create a fake login through only username for now, and json file db
+- estimate costs had for single user and block new requests if over monthly cap
+- add about page
+- add better navigation
+- allow users to ask modification to their weekly plan (including rescheduling sessions / adapting during week)
+- implement feedback on running session
+- implement weekly review process 
+- add optional integration with google calendar to schedule events (full day or ask for time, estimate duration)
+- try to implement integrations with garmin / coros / polar etc
+
+### maybe
+- add ability to free talk / type in profile for current state
+- add analytics about level of user satisfactions with different models / different prompts etc 
 
 ## Learned lessons
 - When acquisition of structured data can be done through an ad-hoc UI, it probably should be done so. 

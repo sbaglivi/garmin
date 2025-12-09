@@ -22,7 +22,7 @@ from auth import (
     create_access_token,
     get_current_user,
 )
-from tasks import run_verification
+from tasks import run_verification, run_macroplanner
 
 
 @asynccontextmanager
@@ -140,6 +140,72 @@ async def get_verification(
         status=user_data.verification_status or "none",
         result=user_data.verification_result,
     )
+
+
+class UserStateResponse(BaseModel):
+    has_profile: bool
+    profile: dict | None = None
+    verification_status: str | None = None
+    verification_result: dict | None = None
+    macroplan_status: str | None = None
+    training_overview: dict | None = None
+    weekly_plan_status: str | None = None
+    weekly_schedules: list | None = None
+
+
+@app.get("/user/state", response_model=UserStateResponse)
+async def get_user_state(
+    current_user: Annotated[User, Depends(get_current_user)],
+    db: Annotated[AsyncSession, Depends(get_db)],
+):
+    """Get complete user state for frontend routing."""
+    result = await db.execute(select(UserData).where(UserData.user_id == current_user.id))
+    user_data = result.scalar_one_or_none()
+
+    if not user_data or not user_data.profile:
+        return UserStateResponse(has_profile=False)
+
+    return UserStateResponse(
+        has_profile=True,
+        profile=user_data.profile,
+        verification_status=user_data.verification_status,
+        verification_result=user_data.verification_result,
+        macroplan_status=user_data.macroplan_status,
+        training_overview=user_data.training_overview,
+        weekly_plan_status=user_data.weekly_plan_status,
+        weekly_schedules=user_data.weekly_schedules,
+    )
+
+
+@app.post("/profiles/proceed")
+async def proceed_with_plan(
+    current_user: Annotated[User, Depends(get_current_user)],
+    db: Annotated[AsyncSession, Depends(get_db)],
+):
+    """Allow user to proceed with macroplan generation after warning."""
+    result = await db.execute(select(UserData).where(UserData.user_id == current_user.id))
+    user_data = result.scalar_one_or_none()
+
+    if not user_data or not user_data.profile:
+        raise HTTPException(status_code=404, detail="No profile found")
+
+    if user_data.verification_status != "completed":
+        raise HTTPException(status_code=400, detail="Verification not completed")
+
+    verification_outcome = user_data.verification_result.get("outcome") if user_data.verification_result else None
+    if verification_outcome == "rejected":
+        raise HTTPException(status_code=400, detail="Cannot proceed with rejected profile")
+
+    if user_data.macroplan_status in ("pending", "completed"):
+        return {"message": "Macroplan already in progress or completed"}
+
+    # Start macroplan generation
+    user_data.macroplan_status = "pending"
+    await db.commit()
+
+    asyncio.create_task(run_macroplanner(current_user.id, user_data.profile))
+
+    return {"message": "Macroplan generation started", "macroplan_status": "pending"}
 
 
 @app.get("/health")

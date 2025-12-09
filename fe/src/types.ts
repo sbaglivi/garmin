@@ -85,3 +85,80 @@ export interface UserProfile {
     goal: Goal;
     first_training_date: string; // ISO date string YYYY-MM-DD
 }
+
+// Training Strategy types
+export interface PhaseStrategy {
+    phase_name: "Base" | "Build" | "Peak" | "Taper";
+    duration_weeks: number;
+    key_focus: string;
+}
+
+export interface TrainingStrategy {
+    plan_overview: string;
+    target_peak_volume_km: number;
+    target_longest_run_km: number;
+    phases: PhaseStrategy[];
+}
+
+// Verification types
+export interface Proposal {
+    description: string;
+    reason: string;
+    new_goal?: Goal;
+    new_days_per_week?: number;
+}
+
+export interface VerificationResult {
+    outcome: "ok" | "warning" | "rejected";
+    message: string;
+    proposals: Proposal[];
+}
+
+// Weekly Schedule types
+export type RunType = "easy" | "recovery" | "long_run" | "tempo" | "interval" | "fartlek" | "race_simulation";
+
+export interface RunningSession {
+    day: DayOfWeek;
+    run_type: RunType;
+    distance_km: number;
+    workout_description: string;
+    notes?: string;
+}
+
+export interface Exercise {
+    name: string;
+    series: number;
+    reps?: number;
+    hold?: number;
+    weight?: number;
+    recovery: number;
+    form_cues: string;
+}
+
+export interface StrengthSession {
+    day: DayOfWeek;
+    duration_minutes: number;
+    exercises: Exercise[];
+}
+
+export interface WeeklySchedule {
+    week_number: number;
+    phase_name: string;
+    weekly_volume_target: number;
+    weekly_long_run_target: number;
+    week_overview: string;
+    running_sessions: RunningSession[];
+    strength_sessions: StrengthSession[];
+}
+
+// User state from API
+export interface UserState {
+    has_profile: boolean;
+    profile?: UserProfile;
+    verification_status?: "pending" | "completed" | "error" | null;
+    verification_result?: VerificationResult;
+    macroplan_status?: "pending" | "completed" | "error" | null;
+    training_overview?: TrainingStrategy;
+    weekly_plan_status?: "pending" | "completed" | "error" | null;
+    weekly_schedules?: WeeklySchedule[];
+}

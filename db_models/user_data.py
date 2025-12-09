@@ -17,6 +17,12 @@ class UserData(Base):
     verification_status: Mapped[str | None] = mapped_column(String(20), nullable=True)
     verification_result: Mapped[dict | None] = mapped_column(JSON, nullable=True)
 
+    # Macroplanner state: "pending" | "completed" | "error" | None
+    macroplan_status: Mapped[str | None] = mapped_column(String(20), nullable=True)
+
+    # Weekly plan state: "pending" | "completed" | "error" | None
+    weekly_plan_status: Mapped[str | None] = mapped_column(String(20), nullable=True)
+
     user: Mapped["User"] = relationship(back_populates="data")
 
 

@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import {
     type UserProfile,
     DistanceUnit,
@@ -12,7 +12,6 @@ import {
     type RecentRace,
 } from '../types';
 import { useAuth } from '../contexts/AuthContext';
-import VerificationModal from './VerificationModal';
 
 const getTomorrowDate = (): string => {
     const tomorrow = new Date();
@@ -63,15 +62,28 @@ const inputClass = "w-full px-3 py-2.5 bg-neutral-800 border border-neutral-700 
 const labelClass = "block text-sm font-medium text-neutral-300 mb-1.5";
 const sectionTitleClass = "text-base font-medium text-neutral-200 mb-3";
 
-export default function UserProfileForm() {
+interface Props {
+    onSubmitSuccess?: () => void;
+    initialProfile?: UserProfile;
+}
+
+export default function UserProfileForm({ onSubmitSuccess, initialProfile }: Props) {
     const { token } = useAuth();
-    const [profile, setProfile] = useState<UserProfile>(INITIAL_PROFILE);
+    const [profile, setProfile] = useState<UserProfile>(initialProfile || INITIAL_PROFILE);
     const [currentPage, setCurrentPage] = useState<Page>('personal');
-    const [hasInjuryHistory, setHasInjuryHistory] = useState(false);
-    const [wantsStrengthTraining, setWantsStrengthTraining] = useState(false);
+    const [hasInjuryHistory, setHasInjuryHistory] = useState(!!initialProfile?.injury_history);
+    const [wantsStrengthTraining, setWantsStrengthTraining] = useState(!!initialProfile?.strength);
     const [errors, setErrors] = useState<Record<string, string>>({});
     const [isSubmitting, setIsSubmitting] = useState(false);
-    const [showVerificationModal, setShowVerificationModal] = useState(false);
+
+    // Update profile when initialProfile changes
+    useEffect(() => {
+        if (initialProfile) {
+            setProfile(initialProfile);
+            setHasInjuryHistory(!!initialProfile.injury_history);
+            setWantsStrengthTraining(!!initialProfile.strength);
+        }
+    }, [initialProfile]);
 
     const handleChange = (field: keyof UserProfile, value: unknown) => {
         setProfile((prev) => ({ ...prev, [field]: value }));
@@ -255,7 +267,7 @@ export default function UserProfileForm() {
                 throw new Error(error.detail || 'Failed to save profile');
             }
 
-            setShowVerificationModal(true);
+            onSubmitSuccess?.();
         } catch (error) {
             console.error('Submit error:', error);
             setErrors({ submit: error instanceof Error ? error.message : 'Failed to save profile' });
@@ -812,29 +824,6 @@ export default function UserProfileForm() {
                     </div>
                 </div>
             </form>
-
-            <VerificationModal
-                isOpen={showVerificationModal}
-                onClose={() => {
-                    setShowVerificationModal(false);
-                }}
-                onAcceptProposal={(proposal) => {
-                    // Apply the proposal to the profile
-                    if (proposal.new_goal) {
-                        handleChange('goal', proposal.new_goal);
-                    }
-                    if (proposal.new_days_per_week) {
-                        // User would need to adjust days_available manually
-                        // For now, just close and let them edit
-                    }
-                    setShowVerificationModal(false);
-                    setCurrentPage('goal');
-                }}
-                onContinueAnyway={() => {
-                    setShowVerificationModal(false);
-                    // Profile is already saved, user can proceed
-                }}
-            />
         </div>
     );
 }
