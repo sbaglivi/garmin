@@ -99,7 +99,7 @@ def summarize_run(activity: dict, title: str, splits: dict | None) -> str:
         f"Time: {int(dur_sec//60)}m{int(dur_sec%60):02d}s",
         f"Pace: {pace_str}",
         f"HR: {avg_hr:.0f} avg / {max_hr:.0f} max",
-        f"Elev+: {elev_gain:.0f} m",
+        f"Elev+: {elev_gain:.0f} m" if elev_gain else "",
         f"Cad: {cadence:.0f} spm" if cadence else None,
         f"TE: {training_effect:.1f} ({aerobic_msg}, {anaerobic_msg})" if training_effect else None
     ]
